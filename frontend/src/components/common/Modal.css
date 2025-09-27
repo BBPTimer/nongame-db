@@ -1,0 +1,37 @@
+/* https://www.w3schools.com/howto/howto_css_modals.asp */
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: white;
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 5px solid MidnightBlue;
+  border-radius: 10px;
+  width: 80%;
+  white-space: pre-wrap; /* Preserve line breaks */
+  text-align: left;
+}
+
+/* The Close Button */
+.close-modal {
+  color: MidnightBlue;
+  float: right;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.close-modal:hover {
+  color: Coral;
+}
