@@ -1,11 +1,11 @@
 package com.nongame.backend.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -17,11 +17,20 @@ public class Deck {
     @Size(min=1, max=25, message="Deck name must be 1-25 characters long.")
     private String deckName;
 
-    public Deck(String deckName) {
-        this.deckName = deckName;
-    }
+    @ManyToOne
+    @JsonBackReference
+    private User user;
+
+    @OneToMany(mappedBy = "deck", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Prompt> prompts;
 
     public Deck() {
+    }
+
+    public Deck(String deckName, User user) {
+        this.deckName = deckName;
+        this.user = user;
     }
 
     public int getId() {
@@ -34,6 +43,22 @@ public class Deck {
 
     public void setDeckName(String deckName) {
         this.deckName = deckName;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public List<Prompt> getPrompts() {
+        return prompts;
+    }
+
+    public void setPrompts(List<Prompt> prompts) {
+        this.prompts = prompts;
     }
 
     @Override

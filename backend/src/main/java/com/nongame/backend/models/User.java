@@ -1,11 +1,10 @@
 package com.nongame.backend.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.validation.constraints.Size;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -14,18 +13,19 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Size(min=2, max=20, message="Username must be 2-20 characters long.")
     private String username;
-
-    @Size(min=8, max=20, message="Password must be 8-20 characters long.")
     private String password;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private final List<Deck> decks = new ArrayList<>();
+
+    public User() {
+    }
 
     public User(String username, String password) {
         this.username = username;
         this.password = password;
-    }
-
-    public User() {
     }
 
     public int getId() {

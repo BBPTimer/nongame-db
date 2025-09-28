@@ -1,5 +1,6 @@
 package com.nongame.backend.controllers;
 
+import com.nongame.backend.dto.UserDTO;
 import com.nongame.backend.models.User;
 import com.nongame.backend.repositories.UserRepository;
 import jakarta.validation.Valid;
@@ -34,21 +35,22 @@ public class UserController {
     }
 
     @PostMapping(value = "/add", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addNewUser(@Valid @RequestBody User user) {
+    public ResponseEntity<?> addNewUser(@Valid @RequestBody UserDTO userData) {
+        User user = new User(userData.getUsername(), userData.getPassword());
         userRepository.save(user);
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
     @PutMapping(value = "/updatePW/{userId}", consumes=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updatePW(@PathVariable int userId, @Valid @RequestBody User user) {
-        User updatedUser = userRepository.findById(userId).orElse(null);
-        if (updatedUser == null) {
+    public ResponseEntity<?> updatePW(@PathVariable int userId, @Valid @RequestBody UserDTO userData) {
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         else {
-            updatedUser.setPassword(user.getPassword());
-            userRepository.save(updatedUser);
-            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+            user.setPassword(userData.getPassword());
+            userRepository.save(user);
+            return new ResponseEntity<>(user, HttpStatus.OK);
         }
     }
 

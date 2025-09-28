@@ -1,9 +1,7 @@
 package com.nongame.backend.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 
 import java.util.Objects;
@@ -17,8 +15,13 @@ public class Prompt {
     @Size(min=1, max=130, message="Prompt text must be 1-130 characters long.")
     private String promptText;
 
-    public Prompt(String promptText) {
+    @ManyToOne
+    @JsonBackReference
+    private Deck deck;
+
+    public Prompt(String promptText, Deck deck) {
         this.promptText = promptText;
+        this.deck = deck;
     }
 
     public Prompt() {
@@ -34,6 +37,14 @@ public class Prompt {
 
     public void setPromptText(String promptText) {
         this.promptText = promptText;
+    }
+
+    public Deck getDeck() {
+        return deck;
+    }
+
+    public void setDeck(Deck deck) {
+        this.deck = deck;
     }
 
     @Override
