@@ -12,7 +12,6 @@ public class Prompt {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Size(min=1, max=130, message="Prompt text must be 1-130 characters long.")
     private String promptText;
 
     @ManyToOne

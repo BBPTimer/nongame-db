@@ -1,6 +1,10 @@
 package com.nongame.backend.controllers;
 
+import com.nongame.backend.dto.PromptDTO;
+import com.nongame.backend.models.Deck;
 import com.nongame.backend.models.Prompt;
+import com.nongame.backend.models.User;
+import com.nongame.backend.repositories.DeckRepository;
 import com.nongame.backend.repositories.PromptRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +20,9 @@ import java.util.List;
 public class PromptController {
     @Autowired
     PromptRepository promptRepository;
+
+    @Autowired
+    DeckRepository deckRepository;
 
     @GetMapping("")
     public ResponseEntity<?> getAllPrompts() {
@@ -34,21 +41,27 @@ public class PromptController {
     }
 
     @PostMapping(value = "/add", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addNewPrompt(@Valid @RequestBody Prompt prompt) {
-        promptRepository.save(prompt);
-        return new ResponseEntity<>(prompt, HttpStatus.CREATED);
+    public ResponseEntity<?> addNewPrompt(@Valid @RequestBody PromptDTO promptData) {
+        Deck deck = deckRepository.findById(promptData.getDeckId()).orElse(null);
+        if (deck == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            Prompt prompt = new Prompt(promptData.getPromptText(), deck);
+            promptRepository.save(prompt);
+            return new ResponseEntity<>(prompt, HttpStatus.CREATED);
+        }
     }
 
     @PutMapping(value = "/update/{promptId}", consumes=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updatePrompt(@PathVariable int promptId, @Valid @RequestBody Prompt prompt) {
-        Prompt updatedPrompt = promptRepository.findById(promptId).orElse(null);
-        if (updatedPrompt == null) {
+    public ResponseEntity<?> updatePrompt(@PathVariable int promptId, @Valid @RequestBody PromptDTO promptData) {
+        Prompt prompt = promptRepository.findById(promptId).orElse(null);
+        if (prompt == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         else {
-            updatedPrompt.setPromptText(prompt.getPromptText());
-            promptRepository.save(updatedPrompt);
-            return new ResponseEntity<>(updatedPrompt, HttpStatus.OK);
+            prompt.setPromptText(promptData.getPromptText());
+            promptRepository.save(prompt);
+            return new ResponseEntity<>(prompt, HttpStatus.OK);
         }
     }
 

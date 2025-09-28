@@ -1,6 +1,7 @@
 package com.nongame.backend.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public class DeckDTO {
@@ -8,6 +9,7 @@ public class DeckDTO {
     @Size(min=1, max=25, message="Deck name must be 1-25 characters long.")
     private String deckName;
 
+    @NotNull(message = "User is required.")
     private int userId;
 
     public DeckDTO(String deckName, int userId) {
