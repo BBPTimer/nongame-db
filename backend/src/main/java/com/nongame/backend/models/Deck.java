@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.Size;
 
 import java.util.Objects;
 
@@ -13,6 +14,7 @@ public class Deck {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Size(min=1, max=25, message="Deck name must be 1-25 characters long.")
     private String deckName;
 
     public Deck(String deckName) {

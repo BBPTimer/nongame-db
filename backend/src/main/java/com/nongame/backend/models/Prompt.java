@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.Size;
 
 import java.util.Objects;
 
@@ -13,6 +14,7 @@ public class Prompt {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Size(min=1, max=130, message="Prompt text must be 1-130 characters long.")
     private String promptText;
 
     public Prompt(String promptText) {

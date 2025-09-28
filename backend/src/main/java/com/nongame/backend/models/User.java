@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.Size;
 
 import java.util.Objects;
 
@@ -13,7 +14,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Size(min=2, max=20, message="Username must be 2-20 characters long.")
     private String username;
+
+    @Size(min=8, max=20, message="Password must be 8-20 characters long.")
     private String password;
 
     public User(String username, String password) {
