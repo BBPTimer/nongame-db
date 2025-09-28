@@ -40,7 +40,7 @@ public class PromptController {
     }
 
     @PutMapping(value = "/update/{promptId}", consumes=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updatePW(@PathVariable int promptId, @Valid @RequestBody Prompt prompt) {
+    public ResponseEntity<?> updatePrompt(@PathVariable int promptId, @Valid @RequestBody Prompt prompt) {
         Prompt updatedPrompt = promptRepository.findById(promptId).orElse(null);
         if (updatedPrompt == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

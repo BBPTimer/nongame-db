@@ -1,7 +1,10 @@
 package com.nongame.backend.controllers;
 
+import com.nongame.backend.dto.DeckDTO;
 import com.nongame.backend.models.Deck;
+import com.nongame.backend.models.User;
 import com.nongame.backend.repositories.DeckRepository;
+import com.nongame.backend.repositories.UserRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +19,9 @@ import java.util.List;
 public class DeckController {
     @Autowired
     DeckRepository deckRepository;
+
+    @Autowired
+    UserRepository userRepository;
 
     @GetMapping("")
     public ResponseEntity<?> getAllDecks() {
@@ -34,21 +40,27 @@ public class DeckController {
     }
 
     @PostMapping(value = "/add", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addNewDeck(@Valid @RequestBody Deck deck) {
-        deckRepository.save(deck);
-        return new ResponseEntity<>(deck, HttpStatus.CREATED);
+    public ResponseEntity<?> addNewDeck(@Valid @RequestBody DeckDTO deckData) {
+        User user = userRepository.findById(deckData.getUserId()).orElse(null);
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            Deck deck = new Deck(deckData.getDeckName(), user);
+            deckRepository.save(deck);
+            return new ResponseEntity<>(deck, HttpStatus.CREATED);
+        }
     }
 
     @PutMapping(value = "/update/{deckId}", consumes=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updatePW(@PathVariable int deckId, @Valid @RequestBody Deck deck) {
-        Deck updatedDeck = deckRepository.findById(deckId).orElse(null);
-        if (updatedDeck == null) {
+    public ResponseEntity<?> updateDeck(@PathVariable int deckId, @Valid @RequestBody DeckDTO deckData) {
+        Deck deck = deckRepository.findById(deckId).orElse(null);
+        if (deck == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         else {
-            updatedDeck.setDeckName(deck.getDeckName());
-            deckRepository.save(updatedDeck);
-            return new ResponseEntity<>(updatedDeck, HttpStatus.OK);
+            deck.setDeckName(deckData.getDeckName());
+            deckRepository.save(deck);
+            return new ResponseEntity<>(deck, HttpStatus.OK);
         }
     }
 

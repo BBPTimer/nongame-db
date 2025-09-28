@@ -14,7 +14,6 @@ public class Deck {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Size(min=1, max=25, message="Deck name must be 1-25 characters long.")
     private String deckName;
 
     @ManyToOne
