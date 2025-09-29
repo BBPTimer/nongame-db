@@ -16,9 +16,9 @@ const Header = () => {
         <Link to="/instructions">How to Play</Link>
       )}
       {useLocation().pathname === "/custom" ? (
-        <div className="heading">Custom Deck</div>
+        <div className="heading">Custom Decks</div>
       ) : (
-        <Link to="/custom">Custom Deck</Link>
+        <Link to="/custom">Custom Decks</Link>
       )}
     </header>
   );
