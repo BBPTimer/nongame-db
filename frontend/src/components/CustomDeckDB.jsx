@@ -109,11 +109,11 @@ const CustomDeckDB = () => {
   };
 
   // Delete deck
-  const handleDeleteDeck = async (id) => {
+  const handleDeleteDeck = async (deckId) => {
     if (confirm("Are you sure that you want to delete this deck?")) {
       // DELETE request
       const response = await fetch(
-        "http://localhost:8080/api/decks/delete/" + id,
+        "http://localhost:8080/api/decks/delete/" + deckId,
         {
           method: "DELETE",
         }
@@ -125,11 +125,14 @@ const CustomDeckDB = () => {
 
   // Add prompt
   const [isAddingPrompt, setIsAddingPrompt] = useState(false);
-  const [textareaValue, setTextareaValue] = useState("");
 
   const handleAddPrompt = async (event) => {
     // Prevent form submission
     event.preventDefault();
+    // Read form data
+    const form = event.target;
+    const formData = new FormData(form);
+    const formJson = Object.fromEntries(formData.entries());
     // POST request
     const response = await fetch("http://localhost:8080/api/prompts/add", {
       method: "POST",
@@ -137,25 +140,60 @@ const CustomDeckDB = () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        promptText: textareaValue,
+        promptText: formJson.newPromptText,
         deckId: allDecks[selectedDeckIndex].id,
       }),
     });
     // Clear textarea
-    setTextareaValue("");
     setIsAddingPrompt(false);
     fetchDecks(selectedUser);
   };
 
   // Edit prompt
   const [isEditingPrompt, setIsEditingPrompt] = useState(false);
+  const [currentPrompt, setCurrentPrompt] = useState(null);
+
+  const handleEditPromptClick = (prompt) => {
+    setIsEditingPrompt(true);
+    setCurrentPrompt(prompt);
+  };
+
+  const handleEditPrompt = async (event) => {
+    // Prevent form submission
+    event.preventDefault();
+    // Read form data
+    const form = event.target;
+    const formData = new FormData(form);
+    const formJson = Object.fromEntries(formData.entries());
+    // POST request
+    const response = await fetch(
+      "http://localhost:8080/api/prompts/update/" + currentPrompt.id,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          promptText: formJson.updatedPromptText,
+        }),
+      }
+    );
+    setIsEditingPrompt(false);
+    setCurrentPrompt(null);
+    fetchDecks(selectedUser);
+  };
+
+  const handleCancelPromptClick = () => {
+    setIsEditingPrompt(false);
+    setCurrentPrompt(null);
+  };
 
   // Delete prompt
-  const handleDeletePrompt = async (id) => {
+  const handleDeletePrompt = async (promptId) => {
     if (confirm("Are you sure that you want to delete this prompt?")) {
       // DELETE request
       const response = await fetch(
-        "http://localhost:8080/api/prompts/delete/" + id,
+        "http://localhost:8080/api/prompts/delete/" + promptId,
         {
           method: "DELETE",
         }
@@ -203,7 +241,10 @@ const CustomDeckDB = () => {
                 maxLength={"25"}
                 required
               ></input>
-              <button>Add</button>
+              <button type="submit">Add</button>
+              <button type="button" onClick={() => setIsAddingDeck(false)}>
+                Cancel
+              </button>
             </form>
           ) : (
             <button onClick={() => setIsAddingDeck(true)}>Add Deck</button>
@@ -234,7 +275,10 @@ const CustomDeckDB = () => {
                 maxLength={"25"}
                 required
               ></input>
-              <button>Save</button>
+              <button type="submit">Save</button>
+              <button type="button" onClick={() => setIsEditingDeckName(false)}>
+                Cancel
+              </button>
             </form>
           ) : (
             <>
@@ -262,15 +306,17 @@ const CustomDeckDB = () => {
               <br />
               <textarea
                 id="custom-prompt"
-                value={textareaValue}
-                onChange={(event) => setTextareaValue(event.target.value)}
+                name="newPromptText"
                 rows="4"
                 cols="40"
                 maxLength="130"
                 required
               ></textarea>
               <br />
-              <button>Add</button>
+              <button type="submit">Add</button>
+              <button type="button" onClick={() => setIsAddingPrompt(false)}>
+                Cancel
+              </button>
             </form>
           ) : (
             <button
@@ -283,6 +329,28 @@ const CustomDeckDB = () => {
           )}
         </div>
         <br />
+        {/* Edit prompt */}
+        {isEditingPrompt && (
+          <>
+            <form onSubmit={handleEditPrompt} className="white-bg gray-hover">
+              <br />
+              <textarea
+                name="updatedPromptText"
+                defaultValue={currentPrompt.promptText}
+                rows="4"
+                cols="40"
+                maxLength="130"
+                required
+              ></textarea>
+              <br />
+              <button type="submit">Save</button>
+              <button type="button" onClick={handleCancelPromptClick}>
+                Cancel
+              </button>
+            </form>
+            <br />
+          </>
+        )}
         {/* Prompts list */}
         <div className="white-bg gray-hover custom-deck-list">
           {allDecks[selectedDeckIndex].prompts.length == 0 ? (
@@ -297,7 +365,10 @@ const CustomDeckDB = () => {
                         {prompt.promptText}
                       </td>
                       <td>
-                        <span className="material-symbols-outlined shake">
+                        <span
+                          onClick={() => handleEditPromptClick(prompt)}
+                          className="material-symbols-outlined shake"
+                        >
                           edit
                         </span>
                       </td>
