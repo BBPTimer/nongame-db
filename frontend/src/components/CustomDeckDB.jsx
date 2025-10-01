@@ -49,11 +49,27 @@ const CustomDeckDB = () => {
   // Add deck
   const [isAddingDeck, setIsAddingDeck] = useState(false);
 
-  const handleAddDeck = (event) => {
+  const handleAddDeck = async (event) => {
     // Prevent form submission
     event.preventDefault();
+    // Read form data
+    const form = event.target;
+    const formData = new FormData(form);
+    const formJson = Object.fromEntries(formData.entries());
     // POST request
+    const response = await fetch("http://localhost:8080/api/decks/add", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        deckName: formJson.newDeck,
+        userId: selectedUser,
+      }),
+    });
     setIsAddingDeck(false);
+    fetchDecks(selectedUser);
+    alert(formJson.newDeck + " deck added!");
   };
 
   // Select deck
@@ -98,8 +114,17 @@ const CustomDeckDB = () => {
   const [isEditingPrompt, setIsEditingPrompt] = useState(false);
 
   // Delete prompt
-  const handleDeletePrompt = () => {
-    // DELETE request
+  const handleDeletePrompt = async (id) => {
+    if (confirm("Are you sure that you want to delete this prompt?")) {
+      // DELETE request
+      const response = await fetch(
+        "http://localhost:8080/api/prompts/delete/" + id,
+        {
+          method: "DELETE",
+        }
+      );
+      fetchDecks(selectedUser);
+    }
   };
 
   if (isLoading) {
@@ -135,6 +160,7 @@ const CustomDeckDB = () => {
               <label htmlFor="new-deck">Deck name: </label>
               <input
                 id="new-deck"
+                name="newDeck"
                 type="text"
                 maxLength={"25"}
                 required
@@ -196,30 +222,38 @@ const CustomDeckDB = () => {
           )}
         </div>
         <br />
-        <table className="white-bg gray-hover custom-deck-list">
-          <tbody>
-            {allDecks[selectedDeckIndex].prompts.map((prompt) => {
-              return (
-                <tr key={prompt.id}>
-                  <td className="custom-deck-list-item">{prompt.promptText}</td>
-                  <td>
-                    <span className="material-symbols-outlined shake">
-                      edit
-                    </span>
-                  </td>
-                  <td>
-                    <span
-                      className="material-symbols-outlined shake"
-                      onClick={handleDeletePrompt}
-                    >
-                      delete
-                    </span>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+        <div className="white-bg gray-hover custom-deck-list">
+          {allDecks[selectedDeckIndex].prompts.length == 0 ? (
+            <span>Add your first prompt to get started!</span>
+          ) : (
+            <table>
+              <tbody>
+                {allDecks[selectedDeckIndex].prompts.map((prompt) => {
+                  return (
+                    <tr key={prompt.id}>
+                      <td className="custom-deck-list-item">
+                        {prompt.promptText}
+                      </td>
+                      <td>
+                        <span className="material-symbols-outlined shake">
+                          edit
+                        </span>
+                      </td>
+                      <td>
+                        <span
+                          className="material-symbols-outlined shake"
+                          onClick={() => handleDeletePrompt(prompt.id)}
+                        >
+                          delete
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          )}
+        </div>
       </>
     );
   }
