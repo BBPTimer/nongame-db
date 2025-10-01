@@ -69,7 +69,10 @@ const CustomDeckDB = () => {
     });
     setIsAddingDeck(false);
     fetchDecks(selectedUser);
-    alert(formJson.newDeck + " deck added!");
+    alert(
+      formJson.newDeck +
+        " deck added!\n\nSelect it in the Edit deck dropdown to add prompts."
+    );
   };
 
   // Select deck
@@ -126,6 +129,11 @@ const CustomDeckDB = () => {
   // Add prompt
   const [isAddingPrompt, setIsAddingPrompt] = useState(false);
 
+  const handleAddPromptClick = () => {
+    setIsAddingPrompt(true);
+    addEditPromptRef.current.scrollIntoView({ behavior: "smooth" });
+  };
+
   const handleAddPrompt = async (event) => {
     // Prevent form submission
     event.preventDefault();
@@ -152,12 +160,12 @@ const CustomDeckDB = () => {
   // Edit prompt
   const [isEditingPrompt, setIsEditingPrompt] = useState(false);
   const [currentPrompt, setCurrentPrompt] = useState(null);
-  const editPromptRef = useRef(null);
+  const addEditPromptRef = useRef(null);
 
   const handleEditPromptClick = (prompt) => {
     setIsEditingPrompt(true);
     setCurrentPrompt(prompt);
-    editPromptRef.current.scrollIntoView({ behavior: "smooth" });
+    addEditPromptRef.current.scrollIntoView({ behavior: "smooth" });
   };
 
   const handleEditPrompt = async (event) => {
@@ -300,44 +308,40 @@ const CustomDeckDB = () => {
             </>
           )}{" "}
         </h2>
-        {/* Add prompt */}
-        <div className="white-bg gray-hover">
-          {isAddingPrompt ? (
-            <form onSubmit={handleAddPrompt}>
-              <label htmlFor="new-prompt">Prompt:</label>
+        {/* Add/Edit prompt */}
+        <div ref={addEditPromptRef}>
+          {(isAddingPrompt || isEditingPrompt) && <br />}
+          {/* Add Prompt */}
+          {isAddingPrompt && (
+            <>
+              <form onSubmit={handleAddPrompt} className="white-bg gray-hover">
+                <label htmlFor="new-prompt">Add Prompt:</label>
+                <br />
+                <textarea
+                  id="new-prompt"
+                  name="newPromptText"
+                  rows="4"
+                  cols="40"
+                  maxLength="130"
+                  required
+                ></textarea>
+                <br />
+                <button type="submit">Add</button>
+                <button type="button" onClick={() => setIsAddingPrompt(false)}>
+                  Cancel
+                </button>
+              </form>
               <br />
-              <textarea
-                id="new-prompt"
-                name="newPromptText"
-                rows="4"
-                cols="40"
-                maxLength="130"
-                required
-              ></textarea>
-              <br />
-              <button type="submit">Add</button>
-              <button type="button" onClick={() => setIsAddingPrompt(false)}>
-                Cancel
-              </button>
-            </form>
-          ) : (
-            <button
-              onClick={() => {
-                setIsAddingPrompt(true);
-              }}
-            >
-              Add Prompt
-            </button>
+            </>
           )}
-        </div>
-        <br />
-        {/* Edit prompt */}
-        <div ref={editPromptRef}>
+          {/* Edit Prompt */}
           {isEditingPrompt && (
             <>
               <form onSubmit={handleEditPrompt} className="white-bg gray-hover">
+                <label htmlFor="edit-prompt">Edit Prompt:</label>
                 <br />
                 <textarea
+                  id="edit-prompt"
                   name="updatedPromptText"
                   defaultValue={currentPrompt.promptText}
                   rows="4"
@@ -357,39 +361,49 @@ const CustomDeckDB = () => {
         </div>
         {/* Prompts list */}
         <div className="white-bg gray-hover custom-deck-list">
-          {allDecks[selectedDeckIndex].prompts.length == 0 ? (
-            <span>Add your first prompt to get started!</span>
-          ) : (
-            <table>
-              <tbody>
-                {allDecks[selectedDeckIndex].prompts.map((prompt) => {
-                  return (
-                    <tr key={prompt.id}>
-                      <td className="custom-deck-list-item" width={"100%"}>
-                        {prompt.promptText}
-                      </td>
-                      <td>
-                        <span
-                          onClick={() => handleEditPromptClick(prompt)}
-                          className="material-symbols-outlined shake"
-                        >
-                          edit
-                        </span>
-                      </td>
-                      <td>
-                        <span
-                          onClick={() => handleDeletePrompt(prompt.id)}
-                          className="material-symbols-outlined shake"
-                        >
-                          delete
-                        </span>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          )}
+          <table>
+            <tbody>
+              <tr>
+                <td>
+                  <em>Add a new prompt!</em>
+                </td>
+                <td>
+                  <span
+                    onClick={handleAddPromptClick}
+                    className="material-symbols-outlined shake"
+                  >
+                    add_comment
+                  </span>
+                </td>
+                <td></td>
+              </tr>
+              {allDecks[selectedDeckIndex].prompts.map((prompt) => {
+                return (
+                  <tr key={prompt.id}>
+                    <td className="custom-deck-list-item" width={"100%"}>
+                      {prompt.promptText}
+                    </td>
+                    <td>
+                      <span
+                        onClick={() => handleEditPromptClick(prompt)}
+                        className="material-symbols-outlined shake"
+                      >
+                        edit
+                      </span>
+                    </td>
+                    <td>
+                      <span
+                        onClick={() => handleDeletePrompt(prompt.id)}
+                        className="material-symbols-outlined shake"
+                      >
+                        delete
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       </>
     );
