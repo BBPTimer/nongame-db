@@ -101,13 +101,24 @@ const CustomDeckDB = () => {
   const [isAddingPrompt, setIsAddingPrompt] = useState(false);
   const [textareaValue, setTextareaValue] = useState("");
 
-  const handleAddPrompt = (event) => {
+  const handleAddPrompt = async (event) => {
     // Prevent form submission
     event.preventDefault();
     // POST request
+    const response = await fetch("http://localhost:8080/api/prompts/add", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        promptText: textareaValue,
+        deckId: allDecks[selectedDeckIndex].id,
+      }),
+    });
     // Clear textarea
     setTextareaValue("");
     setIsAddingPrompt(false);
+    fetchDecks(selectedUser);
   };
 
   // Edit prompt
@@ -154,6 +165,7 @@ const CustomDeckDB = () => {
           }
         />
         <br />
+
         <div className="white-bg gray-hover">
           {isAddingDeck ? (
             <form className="inline-form" onSubmit={handleAddDeck}>
@@ -172,6 +184,7 @@ const CustomDeckDB = () => {
           )}
         </div>
         <br />
+
         <label htmlFor="select-deck">
           <b>Update deck: </b>
         </label>
@@ -184,6 +197,7 @@ const CustomDeckDB = () => {
             );
           })}
         </select>
+
         <h2>
           {allDecks[selectedDeckIndex].deckName}{" "}
           <span className="material-symbols-outlined shake">edit</span>
@@ -194,6 +208,7 @@ const CustomDeckDB = () => {
             delete
           </span>{" "}
         </h2>
+
         <div className="white-bg gray-hover">
           {isAddingPrompt ? (
             <form onSubmit={handleAddPrompt}>
@@ -222,6 +237,7 @@ const CustomDeckDB = () => {
           )}
         </div>
         <br />
+
         <div className="white-bg gray-hover custom-deck-list">
           {allDecks[selectedDeckIndex].prompts.length == 0 ? (
             <span>Add your first prompt to get started!</span>
@@ -231,7 +247,7 @@ const CustomDeckDB = () => {
                 {allDecks[selectedDeckIndex].prompts.map((prompt) => {
                   return (
                     <tr key={prompt.id}>
-                      <td className="custom-deck-list-item">
+                      <td className="custom-deck-list-item" width={"100%"}>
                         {prompt.promptText}
                       </td>
                       <td>
