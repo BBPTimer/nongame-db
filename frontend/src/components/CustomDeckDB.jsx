@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Deck from "../classes/Deck";
 import Modal from "./common/Modal";
 
@@ -152,10 +152,12 @@ const CustomDeckDB = () => {
   // Edit prompt
   const [isEditingPrompt, setIsEditingPrompt] = useState(false);
   const [currentPrompt, setCurrentPrompt] = useState(null);
+  const editPromptRef = useRef(null);
 
   const handleEditPromptClick = (prompt) => {
     setIsEditingPrompt(true);
     setCurrentPrompt(prompt);
+    editPromptRef.current.scrollIntoView({ behavior: "smooth" });
   };
 
   const handleEditPrompt = async (event) => {
@@ -302,10 +304,10 @@ const CustomDeckDB = () => {
         <div className="white-bg gray-hover">
           {isAddingPrompt ? (
             <form onSubmit={handleAddPrompt}>
-              <label htmlFor="custom-prompt">Prompt:</label>
+              <label htmlFor="new-prompt">Prompt:</label>
               <br />
               <textarea
-                id="custom-prompt"
+                id="new-prompt"
                 name="newPromptText"
                 rows="4"
                 cols="40"
@@ -330,27 +332,29 @@ const CustomDeckDB = () => {
         </div>
         <br />
         {/* Edit prompt */}
-        {isEditingPrompt && (
-          <>
-            <form onSubmit={handleEditPrompt} className="white-bg gray-hover">
+        <div ref={editPromptRef}>
+          {isEditingPrompt && (
+            <>
+              <form onSubmit={handleEditPrompt} className="white-bg gray-hover">
+                <br />
+                <textarea
+                  name="updatedPromptText"
+                  defaultValue={currentPrompt.promptText}
+                  rows="4"
+                  cols="40"
+                  maxLength="130"
+                  required
+                ></textarea>
+                <br />
+                <button type="submit">Save</button>
+                <button type="button" onClick={handleCancelPromptClick}>
+                  Cancel
+                </button>
+              </form>
               <br />
-              <textarea
-                name="updatedPromptText"
-                defaultValue={currentPrompt.promptText}
-                rows="4"
-                cols="40"
-                maxLength="130"
-                required
-              ></textarea>
-              <br />
-              <button type="submit">Save</button>
-              <button type="button" onClick={handleCancelPromptClick}>
-                Cancel
-              </button>
-            </form>
-            <br />
-          </>
-        )}
+            </>
+          )}
+        </div>
         {/* Prompts list */}
         <div className="white-bg gray-hover custom-deck-list">
           {allDecks[selectedDeckIndex].prompts.length == 0 ? (
