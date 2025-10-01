@@ -82,6 +82,32 @@ const CustomDeckDB = () => {
   // Edit deck name
   const [isEditingDeckName, setIsEditingDeckName] = useState(false);
 
+  const handleEditDeckName = async (event) => {
+    // Prevent form submission
+    event.preventDefault();
+    // Read form data
+    const form = event.target;
+    const formData = new FormData(form);
+    const formJson = Object.fromEntries(formData.entries());
+    // POST request
+    const response = await fetch(
+      "http://localhost:8080/api/decks/update/" +
+        allDecks[selectedDeckIndex].id,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          deckName: formJson.updatedDeckName,
+          userId: selectedUser,
+        }),
+      }
+    );
+    setIsEditingDeckName(false);
+    fetchDecks(selectedUser);
+  };
+
   // Delete deck
   const handleDeleteDeck = async (id) => {
     if (confirm("Are you sure that you want to delete this deck?")) {
@@ -165,10 +191,10 @@ const CustomDeckDB = () => {
           }
         />
         <br />
-
+        {/* Add deck */}
         <div className="white-bg gray-hover">
           {isAddingDeck ? (
-            <form className="inline-form" onSubmit={handleAddDeck}>
+            <form onSubmit={handleAddDeck} className="inline-form">
               <label htmlFor="new-deck">Deck name: </label>
               <input
                 id="new-deck"
@@ -184,11 +210,11 @@ const CustomDeckDB = () => {
           )}
         </div>
         <br />
-
+        {/* Select deck */}
         <label htmlFor="select-deck">
-          <b>Update deck: </b>
+          <b>Edit deck: </b>
         </label>
-        <select id="select-deck" onChange={handleChangeDeck}>
+        <select onChange={handleChangeDeck} id="select-deck">
           {allDecks.map((deck, index) => {
             return (
               <option key={deck.id} value={index}>
@@ -197,18 +223,38 @@ const CustomDeckDB = () => {
             );
           })}
         </select>
-
+        {/* Edit deck name */}
         <h2>
-          {allDecks[selectedDeckIndex].deckName}{" "}
-          <span className="material-symbols-outlined shake">edit</span>
-          <span
-            className="material-symbols-outlined shake"
-            onClick={() => handleDeleteDeck(allDecks[selectedDeckIndex].id)}
-          >
-            delete
-          </span>{" "}
+          {isEditingDeckName ? (
+            <form onSubmit={handleEditDeckName} className="inline-form">
+              <input
+                type="text"
+                name="updatedDeckName"
+                defaultValue={allDecks[selectedDeckIndex].deckName}
+                maxLength={"25"}
+                required
+              ></input>
+              <button>Save</button>
+            </form>
+          ) : (
+            <>
+              {allDecks[selectedDeckIndex].deckName}{" "}
+              <span
+                onClick={() => setIsEditingDeckName(true)}
+                className="material-symbols-outlined shake"
+              >
+                edit
+              </span>
+              <span
+                onClick={() => handleDeleteDeck(allDecks[selectedDeckIndex].id)}
+                className="material-symbols-outlined shake"
+              >
+                delete
+              </span>
+            </>
+          )}{" "}
         </h2>
-
+        {/* Add prompt */}
         <div className="white-bg gray-hover">
           {isAddingPrompt ? (
             <form onSubmit={handleAddPrompt}>
@@ -237,7 +283,7 @@ const CustomDeckDB = () => {
           )}
         </div>
         <br />
-
+        {/* Prompts list */}
         <div className="white-bg gray-hover custom-deck-list">
           {allDecks[selectedDeckIndex].prompts.length == 0 ? (
             <span>Add your first prompt to get started!</span>
@@ -257,8 +303,8 @@ const CustomDeckDB = () => {
                       </td>
                       <td>
                         <span
-                          className="material-symbols-outlined shake"
                           onClick={() => handleDeletePrompt(prompt.id)}
+                          className="material-symbols-outlined shake"
                         >
                           delete
                         </span>
