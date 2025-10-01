@@ -67,9 +67,17 @@ const CustomDeckDB = () => {
   const [isEditingDeckName, setIsEditingDeckName] = useState(false);
 
   // Delete deck
-  const handleDeleteDeck = () => {
+  const handleDeleteDeck = async (id) => {
     if (confirm("Are you sure that you want to delete this deck?")) {
       // DELETE request
+      const response = await fetch(
+        "http://localhost:8080/api/decks/delete/" + id,
+        {
+          method: "DELETE",
+        }
+      );
+      setSelectedDeckIndex(0);
+      fetchDecks(selectedUser);
     }
   };
 
@@ -138,27 +146,27 @@ const CustomDeckDB = () => {
           )}
         </div>
         <br />
-        <div className="white-bg gray-hover">
-          <label htmlFor="select-deck">Update deck: </label>
-          <select id="select-deck" onChange={handleChangeDeck}>
-            {allDecks.map((deck, index) => {
-              return (
-                <option key={deck.id} value={index}>
-                  {deck.deckName}
-                </option>
-              );
-            })}
-          </select>
-        </div>
+        <label htmlFor="select-deck">
+          <b>Update deck: </b>
+        </label>
+        <select id="select-deck" onChange={handleChangeDeck}>
+          {allDecks.map((deck, index) => {
+            return (
+              <option key={deck.id} value={index}>
+                {deck.deckName}
+              </option>
+            );
+          })}
+        </select>
         <h2>
+          {allDecks[selectedDeckIndex].deckName}{" "}
+          <span className="material-symbols-outlined shake">edit</span>
           <span
             className="material-symbols-outlined shake"
-            onClick={handleDeleteDeck}
+            onClick={() => handleDeleteDeck(allDecks[selectedDeckIndex].id)}
           >
             delete
           </span>{" "}
-          <span className="material-symbols-outlined shake">edit</span>{" "}
-          {allDecks[selectedDeckIndex].deckName}
         </h2>
         <div className="white-bg gray-hover">
           {isAddingPrompt ? (
@@ -188,22 +196,30 @@ const CustomDeckDB = () => {
           )}
         </div>
         <br />
-        <ul className="custom-deck-list white-bg">
-          {allDecks[selectedDeckIndex].prompts.map((prompt) => {
-            return (
-              <li key={prompt.id} className="custom-deck-list-item">
-                <span
-                  className="material-symbols-outlined shake"
-                  onClick={handleDeletePrompt}
-                >
-                  delete
-                </span>{" "}
-                <span className="material-symbols-outlined shake">edit</span>{" "}
-                {prompt.promptText}
-              </li>
-            );
-          })}
-        </ul>
+        <table className="white-bg gray-hover custom-deck-list">
+          <tbody>
+            {allDecks[selectedDeckIndex].prompts.map((prompt) => {
+              return (
+                <tr key={prompt.id}>
+                  <td className="custom-deck-list-item">{prompt.promptText}</td>
+                  <td>
+                    <span className="material-symbols-outlined shake">
+                      edit
+                    </span>
+                  </td>
+                  <td>
+                    <span
+                      className="material-symbols-outlined shake"
+                      onClick={handleDeletePrompt}
+                    >
+                      delete
+                    </span>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </>
     );
   }
