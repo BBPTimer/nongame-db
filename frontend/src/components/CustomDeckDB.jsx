@@ -7,6 +7,7 @@ const CustomDeckDB = () => {
   const [selectedUser, setSelectedUser] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [allDecks, setAllDecks] = useState(null);
+  const noDecksString = "My First Deck";
 
   const fetchDecks = async (userId) => {
     const decks = [];
@@ -32,6 +33,21 @@ const CustomDeckDB = () => {
     } catch (error) {
       console.error(error.message);
     } finally {
+      // Add deck if user has 0 decks
+      if (!decks.length) {
+        // POST request
+        const response = await fetch("http://localhost:8080/api/decks/add", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            deckName: noDecksString,
+            userId: selectedUser,
+          }),
+        });
+        fetchDecks(selectedUser);
+      }
       setAllDecks(decks);
     }
   };
@@ -243,19 +259,31 @@ const CustomDeckDB = () => {
                 </thead>
                 <tbody>
                   <tr>
-                    <td><span className="material-symbols-outlined">library_add</span></td>
+                    <td>
+                      <span className="material-symbols-outlined">
+                        library_add
+                      </span>
+                    </td>
                     <td>Add a new deck</td>
                   </tr>
                   <tr>
-                    <td><span className="material-symbols-outlined">edit</span></td>
+                    <td>
+                      <span className="material-symbols-outlined">edit</span>
+                    </td>
                     <td>Edit a deck or prompt</td>
                   </tr>
                   <tr>
-                    <td><span className="material-symbols-outlined">delete</span></td>
+                    <td>
+                      <span className="material-symbols-outlined">delete</span>
+                    </td>
                     <td>Delete a deck or prompt</td>
                   </tr>
                   <tr>
-                    <td><span className="material-symbols-outlined">add_comment</span></td>
+                    <td>
+                      <span className="material-symbols-outlined">
+                        add_comment
+                      </span>
+                    </td>
                     <td>Add a new prompt</td>
                   </tr>
                 </tbody>
@@ -290,7 +318,7 @@ const CustomDeckDB = () => {
               >
                 library_add
               </span>{" "}
-              {allDecks[selectedDeckIndex].deckName}{" "}
+              {allDecks[selectedDeckIndex] ? allDecks[selectedDeckIndex].deckName : noDecksString}{" "}
               <span
                 onClick={() => setIsEditingDeckName(true)}
                 className="material-symbols-outlined shake"
@@ -419,7 +447,7 @@ const CustomDeckDB = () => {
                 </td>
                 <td></td>
               </tr>
-              {allDecks[selectedDeckIndex].prompts.map((prompt) => {
+              {allDecks[selectedDeckIndex] && allDecks[selectedDeckIndex].prompts.map((prompt) => {
                 return (
                   <tr key={prompt.id}>
                     <td className="custom-deck-list-item" width={"100%"}>
