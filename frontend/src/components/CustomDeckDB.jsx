@@ -3,11 +3,30 @@ import Deck from "../classes/Deck";
 import Modal from "./common/Modal";
 
 const CustomDeckDB = () => {
-  // Fetch
   const [selectedUser, setSelectedUser] = useState(1);
+
+  // Utility functions
+  const closeOtherForms = (callback) => {
+    setIsAddingDeck(false);
+    setIsEditingDeckName(false);
+    setIsAddingPrompt(false);
+    setIsEditingPrompt(false);
+    callback(true);
+  };
+
+  const readFormData = (event) => {
+    const form = event.target;
+    const formData = new FormData(form);
+    const formJson = Object.fromEntries(formData.entries());
+    return formJson;
+  };
+
+  // Fetch
   const [isLoading, setIsLoading] = useState(true);
   const [allDecks, setAllDecks] = useState(null);
-  const noDecksString = "My First Deck";
+
+  // Deck name if user has 0 decks
+  const firstDeckName = "My First Deck";
 
   const fetchDecks = async (userId) => {
     const decks = [];
@@ -36,26 +55,30 @@ const CustomDeckDB = () => {
       // Add deck if user has 0 decks
       if (!decks.length) {
         // POST request
-        const response = await fetch("http://localhost:8080/api/decks/add", {
+        await fetch("http://localhost:8080/api/decks/add", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            deckName: noDecksString,
+            deckName: firstDeckName,
             userId: selectedUser,
           }),
         });
+        // Re-fetch data now that user has first deck
         fetchDecks(selectedUser);
       }
+
       setAllDecks(decks);
     }
   };
 
+  // Fetch on page load
   useEffect(() => {
     fetchDecks(selectedUser);
   }, []);
 
+  // Render page after fetch populates allDecks
   useEffect(() => {
     if (allDecks !== null) {
       setIsLoading(false);
@@ -69,11 +92,9 @@ const CustomDeckDB = () => {
     // Prevent form submission
     event.preventDefault();
     // Read form data
-    const form = event.target;
-    const formData = new FormData(form);
-    const formJson = Object.fromEntries(formData.entries());
+    const formJson = readFormData(event);
     // POST request
-    const response = await fetch("http://localhost:8080/api/decks/add", {
+    await fetch("http://localhost:8080/api/decks/add", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -85,18 +106,12 @@ const CustomDeckDB = () => {
     });
     setIsAddingDeck(false);
     fetchDecks(selectedUser);
-    alert(
-      formJson.newDeck +
-        " deck added!\n\nSelect it in the Edit deck dropdown to add prompts."
-    );
+    // Display newly-created deck
+    setSelectedDeckIndex(allDecks.length);
   };
 
   // Select deck
   const [selectedDeckIndex, setSelectedDeckIndex] = useState(0);
-
-  const handleChangeDeck = (event) => {
-    setSelectedDeckIndex(event.target.value);
-  };
 
   // Edit deck name
   const [isEditingDeckName, setIsEditingDeckName] = useState(false);
@@ -105,11 +120,9 @@ const CustomDeckDB = () => {
     // Prevent form submission
     event.preventDefault();
     // Read form data
-    const form = event.target;
-    const formData = new FormData(form);
-    const formJson = Object.fromEntries(formData.entries());
+    const formJson = readFormData(event);
     // POST request
-    const response = await fetch(
+    await fetch(
       "http://localhost:8080/api/decks/update/" +
         allDecks[selectedDeckIndex].id,
       {
@@ -131,14 +144,12 @@ const CustomDeckDB = () => {
   const handleDeleteDeck = async (deckId) => {
     if (confirm("Are you sure that you want to delete this deck?")) {
       // DELETE request
-      const response = await fetch(
-        "http://localhost:8080/api/decks/delete/" + deckId,
-        {
-          method: "DELETE",
-        }
-      );
-      setSelectedDeckIndex(0);
+      await fetch("http://localhost:8080/api/decks/delete/" + deckId, {
+        method: "DELETE",
+      });
       fetchDecks(selectedUser);
+      // Display first deck
+      setSelectedDeckIndex(0);
     }
   };
 
@@ -146,7 +157,7 @@ const CustomDeckDB = () => {
   const [isAddingPrompt, setIsAddingPrompt] = useState(false);
 
   const handleAddPromptClick = () => {
-    setIsAddingPrompt(true);
+    closeOtherForms(setIsAddingPrompt);
     addEditPromptRef.current.scrollIntoView({ behavior: "smooth" });
   };
 
@@ -154,11 +165,9 @@ const CustomDeckDB = () => {
     // Prevent form submission
     event.preventDefault();
     // Read form data
-    const form = event.target;
-    const formData = new FormData(form);
-    const formJson = Object.fromEntries(formData.entries());
+    const formJson = readFormData(event);
     // POST request
-    const response = await fetch("http://localhost:8080/api/prompts/add", {
+    await fetch("http://localhost:8080/api/prompts/add", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -168,7 +177,6 @@ const CustomDeckDB = () => {
         deckId: allDecks[selectedDeckIndex].id,
       }),
     });
-    // Clear textarea
     setIsAddingPrompt(false);
     fetchDecks(selectedUser);
   };
@@ -179,7 +187,8 @@ const CustomDeckDB = () => {
   const addEditPromptRef = useRef(null);
 
   const handleEditPromptClick = (prompt) => {
-    setIsEditingPrompt(true);
+    closeOtherForms(setIsEditingPrompt);
+    // Populate textarea with selected prompt text
     setCurrentPrompt(prompt);
     addEditPromptRef.current.scrollIntoView({ behavior: "smooth" });
   };
@@ -188,11 +197,9 @@ const CustomDeckDB = () => {
     // Prevent form submission
     event.preventDefault();
     // Read form data
-    const form = event.target;
-    const formData = new FormData(form);
-    const formJson = Object.fromEntries(formData.entries());
+    const formJson = readFormData(event);
     // POST request
-    const response = await fetch(
+    await fetch(
       "http://localhost:8080/api/prompts/update/" + currentPrompt.id,
       {
         method: "PUT",
@@ -205,6 +212,7 @@ const CustomDeckDB = () => {
       }
     );
     setIsEditingPrompt(false);
+    // Clean up current prompt variable
     setCurrentPrompt(null);
     fetchDecks(selectedUser);
   };
@@ -218,12 +226,9 @@ const CustomDeckDB = () => {
   const handleDeletePrompt = async (promptId) => {
     if (confirm("Are you sure that you want to delete this prompt?")) {
       // DELETE request
-      const response = await fetch(
-        "http://localhost:8080/api/prompts/delete/" + promptId,
-        {
-          method: "DELETE",
-        }
-      );
+      await fetch("http://localhost:8080/api/prompts/delete/" + promptId, {
+        method: "DELETE",
+      });
       fetchDecks(selectedUser);
     }
   };
@@ -312,15 +317,17 @@ const CustomDeckDB = () => {
           ) : (
             <>
               <span
-                onClick={() => setIsAddingDeck(true)}
+                onClick={() => closeOtherForms(setIsAddingDeck)}
                 className="material-symbols-outlined shake"
                 title="Add New Deck"
               >
                 library_add
               </span>{" "}
-              {allDecks[selectedDeckIndex] ? allDecks[selectedDeckIndex].deckName : noDecksString}{" "}
+              {allDecks[selectedDeckIndex]
+                ? allDecks[selectedDeckIndex].deckName
+                : firstDeckName}{" "}
               <span
-                onClick={() => setIsEditingDeckName(true)}
+                onClick={() => closeOtherForms(setIsEditingDeckName)}
                 className="material-symbols-outlined shake"
                 title="Edit Deck Name"
               >
@@ -362,17 +369,24 @@ const CustomDeckDB = () => {
           </>
         )}
         {/* Select deck */}
-        <select onChange={handleChangeDeck}>
-          {allDecks.map((deck, index) => {
-            return (
-              <option key={deck.id} value={index}>
-                {deck.deckName}
-              </option>
-            );
-          })}
-        </select>
-        <br />
-        <br />
+        {!isEditingDeckName && (
+          <>
+            <select
+              onChange={(event) => setSelectedDeckIndex(event.target.value)}
+              value={selectedDeckIndex}
+            >
+              {allDecks.map((deck, index) => {
+                return (
+                  <option key={deck.id} value={index}>
+                    {deck.deckName}
+                  </option>
+                );
+              })}
+            </select>
+            <br />
+            <br />
+          </>
+        )}
         {/* Add/Edit prompt */}
         <div ref={addEditPromptRef}>
           {(isAddingPrompt || isEditingPrompt) && <br />}
@@ -447,33 +461,34 @@ const CustomDeckDB = () => {
                 </td>
                 <td></td>
               </tr>
-              {allDecks[selectedDeckIndex] && allDecks[selectedDeckIndex].prompts.map((prompt) => {
-                return (
-                  <tr key={prompt.id}>
-                    <td className="custom-deck-list-item" width={"100%"}>
-                      {prompt.promptText}
-                    </td>
-                    <td>
-                      <span
-                        onClick={() => handleEditPromptClick(prompt)}
-                        className="material-symbols-outlined shake"
-                        title="Edit Prompt"
-                      >
-                        edit
-                      </span>
-                    </td>
-                    <td>
-                      <span
-                        onClick={() => handleDeletePrompt(prompt.id)}
-                        className="material-symbols-outlined shake"
-                        title="Delete Prompt"
-                      >
-                        delete
-                      </span>
-                    </td>
-                  </tr>
-                );
-              })}
+              {allDecks[selectedDeckIndex] &&
+                allDecks[selectedDeckIndex].prompts.map((prompt) => {
+                  return (
+                    <tr key={prompt.id}>
+                      <td className="custom-deck-list-item" width={"100%"}>
+                        {prompt.promptText}
+                      </td>
+                      <td>
+                        <span
+                          onClick={() => handleEditPromptClick(prompt)}
+                          className="material-symbols-outlined shake"
+                          title="Edit Prompt"
+                        >
+                          edit
+                        </span>
+                      </td>
+                      <td>
+                        <span
+                          onClick={() => handleDeletePrompt(prompt.id)}
+                          className="material-symbols-outlined shake"
+                          title="Delete Prompt"
+                        >
+                          delete
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
             </tbody>
           </table>
         </div>
