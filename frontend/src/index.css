@@ -158,6 +158,11 @@ hr {
   padding: 5px 0px;
 }
 
+#icon-table {
+  margin: auto;
+  text-align: center;
+}
+
 /* Instructions */
 
 #instructions {

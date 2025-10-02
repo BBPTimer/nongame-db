@@ -217,7 +217,6 @@ const CustomDeckDB = () => {
   } else {
     return (
       <>
-        <h1>Custom Decks</h1>{" "}
         <Modal
           modalContent={
             <>
@@ -235,47 +234,37 @@ const CustomDeckDB = () => {
                 up as a deck option in the Game Setup form. We recommend adding
                 20-30 prompts to your custom deck.
               </p>
+              <table id="icon-table">
+                <thead>
+                  <tr>
+                    <th>Icon</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span className="material-symbols-outlined">library_add</span></td>
+                    <td>Add a new deck</td>
+                  </tr>
+                  <tr>
+                    <td><span className="material-symbols-outlined">edit</span></td>
+                    <td>Edit a deck or prompt</td>
+                  </tr>
+                  <tr>
+                    <td><span className="material-symbols-outlined">delete</span></td>
+                    <td>Delete a deck or prompt</td>
+                  </tr>
+                  <tr>
+                    <td><span className="material-symbols-outlined">add_comment</span></td>
+                    <td>Add a new prompt</td>
+                  </tr>
+                </tbody>
+              </table>
             </>
           }
-        />
-        <br />
-        {/* Add deck */}
-        <div className="white-bg gray-hover">
-          {isAddingDeck ? (
-            <form onSubmit={handleAddDeck} className="inline-form">
-              <label htmlFor="new-deck">Deck name: </label>
-              <input
-                id="new-deck"
-                name="newDeck"
-                type="text"
-                maxLength={"25"}
-                required
-              ></input>
-              <button type="submit">Add</button>
-              <button type="button" onClick={() => setIsAddingDeck(false)}>
-                Cancel
-              </button>
-            </form>
-          ) : (
-            <button onClick={() => setIsAddingDeck(true)}>Add Deck</button>
-          )}
-        </div>
-        <br />
-        {/* Select deck */}
-        <label htmlFor="select-deck">
-          <b>Edit deck: </b>
-        </label>
-        <select onChange={handleChangeDeck} id="select-deck">
-          {allDecks.map((deck, index) => {
-            return (
-              <option key={deck.id} value={index}>
-                {deck.deckName}
-              </option>
-            );
-          })}
-        </select>
+        />{" "}
         {/* Edit deck name */}
-        <h2>
+        <h1>
           {isEditingDeckName ? (
             <form onSubmit={handleEditDeckName} className="inline-form">
               <input
@@ -285,29 +274,77 @@ const CustomDeckDB = () => {
                 maxLength={"25"}
                 required
               ></input>
-              <button type="submit">Save</button>
+              <button type="submit" className="pulsate">
+                Save
+              </button>
               <button type="button" onClick={() => setIsEditingDeckName(false)}>
                 Cancel
               </button>
             </form>
           ) : (
             <>
+              <span
+                onClick={() => setIsAddingDeck(true)}
+                className="material-symbols-outlined shake"
+                title="Add New Deck"
+              >
+                library_add
+              </span>{" "}
               {allDecks[selectedDeckIndex].deckName}{" "}
               <span
                 onClick={() => setIsEditingDeckName(true)}
                 className="material-symbols-outlined shake"
+                title="Edit Deck Name"
               >
                 edit
               </span>
               <span
                 onClick={() => handleDeleteDeck(allDecks[selectedDeckIndex].id)}
                 className="material-symbols-outlined shake"
+                title="Delete Deck"
               >
                 delete
               </span>
             </>
-          )}{" "}
-        </h2>
+          )}
+        </h1>
+        <br />
+        {/* Add deck */}
+        {isAddingDeck && (
+          <>
+            <div className="white-bg gray-hover">
+              <form onSubmit={handleAddDeck} className="inline-form">
+                <label htmlFor="new-deck">Deck name: </label>
+                <input
+                  id="new-deck"
+                  name="newDeck"
+                  type="text"
+                  maxLength={"25"}
+                  required
+                ></input>
+                <button type="submit" className="pulsate">
+                  Add
+                </button>
+                <button type="button" onClick={() => setIsAddingDeck(false)}>
+                  Cancel
+                </button>
+              </form>
+            </div>
+            <br />
+          </>
+        )}
+        {/* Select deck */}
+        <select onChange={handleChangeDeck}>
+          {allDecks.map((deck, index) => {
+            return (
+              <option key={deck.id} value={index}>
+                {deck.deckName}
+              </option>
+            );
+          })}
+        </select>
+        <br />
+        <br />
         {/* Add/Edit prompt */}
         <div ref={addEditPromptRef}>
           {(isAddingPrompt || isEditingPrompt) && <br />}
@@ -326,7 +363,9 @@ const CustomDeckDB = () => {
                   required
                 ></textarea>
                 <br />
-                <button type="submit">Add</button>
+                <button type="submit" className="pulsate">
+                  Add
+                </button>
                 <button type="button" onClick={() => setIsAddingPrompt(false)}>
                   Cancel
                 </button>
@@ -350,7 +389,9 @@ const CustomDeckDB = () => {
                   required
                 ></textarea>
                 <br />
-                <button type="submit">Save</button>
+                <button type="submit" className="pulsate">
+                  Save
+                </button>
                 <button type="button" onClick={handleCancelPromptClick}>
                   Cancel
                 </button>
@@ -364,13 +405,14 @@ const CustomDeckDB = () => {
           <table>
             <tbody>
               <tr>
-                <td>
+                <td width={"100%"}>
                   <em>Add a new prompt!</em>
                 </td>
                 <td>
                   <span
                     onClick={handleAddPromptClick}
                     className="material-symbols-outlined shake"
+                    title="Add New Prompt"
                   >
                     add_comment
                   </span>
@@ -387,6 +429,7 @@ const CustomDeckDB = () => {
                       <span
                         onClick={() => handleEditPromptClick(prompt)}
                         className="material-symbols-outlined shake"
+                        title="Edit Prompt"
                       >
                         edit
                       </span>
@@ -395,6 +438,7 @@ const CustomDeckDB = () => {
                       <span
                         onClick={() => handleDeletePrompt(prompt.id)}
                         className="material-symbols-outlined shake"
+                        title="Delete Prompt"
                       >
                         delete
                       </span>
