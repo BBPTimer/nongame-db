@@ -443,8 +443,8 @@ const CustomDeckDB = () => {
           )}
         </div>
         {/* Prompts list */}
-        <div className="white-bg gray-hover custom-deck-list">
-          <table>
+        <div className="white-bg">
+          <table className="left-align">
             <tbody>
               <tr>
                 <td width={"100%"}>

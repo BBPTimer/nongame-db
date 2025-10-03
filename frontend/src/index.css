@@ -16,6 +16,10 @@ body {
   cursor: default;
 }
 
+.left-align {
+  text-align: left;
+}
+
 /* Google Icons */
 
 .material-symbols-outlined {
@@ -149,11 +153,6 @@ hr {
 
 /* CustomDeckList */
 
-.custom-deck-list {
-  text-align: left;
-  list-style-type: none;
-}
-
 .custom-deck-list-item {
   padding: 5px 0px;
 }
@@ -166,7 +165,6 @@ hr {
 /* Instructions */
 
 #instructions {
-  text-align: left;
   width: 90%;
 }
 

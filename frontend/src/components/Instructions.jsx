@@ -2,7 +2,7 @@ const Instructions = () => {
   return (
     <>
       <h1>How to Play</h1>
-      <div id="instructions" className="white-bg">
+      <div id="instructions" className="white-bg left-align">
         <p>
           Welcome to The Nongame!, a conversation game! Players "compete" to
           complete laps around the board by answering prompts. The Nongame! is
