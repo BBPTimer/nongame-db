@@ -3,7 +3,6 @@ package com.nongame.backend.models;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
 
 import java.util.List;
 import java.util.Objects;
@@ -18,7 +17,7 @@ public class Deck {
 
     @ManyToOne
     @JsonBackReference
-    private User user;
+    private UserProfile userProfile;
 
     @OneToMany(mappedBy = "deck", cascade = CascadeType.ALL)
     @JsonManagedReference
@@ -27,9 +26,9 @@ public class Deck {
     public Deck() {
     }
 
-    public Deck(String deckName, User user) {
+    public Deck(String deckName, UserProfile userProfile) {
         this.deckName = deckName;
-        this.user = user;
+        this.userProfile = userProfile;
     }
 
     public int getId() {
@@ -44,12 +43,12 @@ public class Deck {
         this.deckName = deckName;
     }
 
-    public User getUser() {
-        return user;
+    public UserProfile getUser() {
+        return userProfile;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(UserProfile userProfile) {
+        this.userProfile = userProfile;
     }
 
     public List<Prompt> getPrompts() {

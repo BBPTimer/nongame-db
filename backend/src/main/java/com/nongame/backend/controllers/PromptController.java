@@ -1,9 +1,8 @@
 package com.nongame.backend.controllers;
 
-import com.nongame.backend.dto.PromptDTO;
+import com.nongame.backend.dto.request.PromptDTO;
 import com.nongame.backend.models.Deck;
 import com.nongame.backend.models.Prompt;
-import com.nongame.backend.models.User;
 import com.nongame.backend.repositories.DeckRepository;
 import com.nongame.backend.repositories.PromptRepository;
 import jakarta.validation.Valid;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/prompts")
 public class PromptController {

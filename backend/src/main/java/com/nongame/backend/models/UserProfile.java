@@ -8,36 +8,38 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-public class User {
+public class UserProfile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
-    private String username;
+    @Column(unique = true)
+    private String email;
+
     private String password;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "userProfile", cascade = CascadeType.ALL)
     @JsonManagedReference
     private final List<Deck> decks = new ArrayList<>();
 
-    public User() {
+    public UserProfile() {
     }
 
-    public User(String username, String password) {
-        this.username = username;
+    public UserProfile(String email, String password) {
+        this.email = email;
         this.password = password;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public String getUsername() {
-        return username;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPassword() {
@@ -48,17 +50,21 @@ public class User {
         this.password = password;
     }
 
+    public List<Deck> getDecks() {
+        return decks;
+    }
+
     @Override
     public String toString() {
-        return username;
+        return email;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return id == user.id;
+        UserProfile userProfile = (UserProfile) o;
+        return id == userProfile.id;
     }
 
     @Override

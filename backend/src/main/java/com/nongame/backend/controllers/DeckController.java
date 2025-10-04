@@ -1,10 +1,10 @@
 package com.nongame.backend.controllers;
 
-import com.nongame.backend.dto.DeckDTO;
+import com.nongame.backend.dto.request.DeckDTO;
 import com.nongame.backend.models.Deck;
-import com.nongame.backend.models.User;
+import com.nongame.backend.models.UserProfile;
 import com.nongame.backend.repositories.DeckRepository;
-import com.nongame.backend.repositories.UserRepository;
+import com.nongame.backend.repositories.UserProfileRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/decks")
 public class DeckController {
@@ -22,7 +21,7 @@ public class DeckController {
     DeckRepository deckRepository;
 
     @Autowired
-    UserRepository userRepository;
+    UserProfileRepository userProfileRepository;
 
     @GetMapping("")
     public ResponseEntity<?> getAllDecks() {
@@ -42,11 +41,11 @@ public class DeckController {
 
     @PostMapping(value = "/add", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addNewDeck(@Valid @RequestBody DeckDTO deckData) {
-        User user = userRepository.findById(deckData.getUserId()).orElse(null);
-        if (user == null) {
+        UserProfile userProfile = userProfileRepository.findById(deckData.getUserId()).orElse(null);
+        if (userProfile == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } else {
-            Deck deck = new Deck(deckData.getDeckName(), user);
+            Deck deck = new Deck(deckData.getDeckName(), userProfile);
             deckRepository.save(deck);
             return new ResponseEntity<>(deck, HttpStatus.CREATED);
         }
