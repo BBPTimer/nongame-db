@@ -33,6 +33,7 @@ public class UserProfileController {
                         jwtTokenUtil.getUsernameFromToken(
                                 // Remove Bearer prefix from token
                                 token.substring(7)));
+        // Can't find user in DB
         if (opt.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } else {
