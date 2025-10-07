@@ -74,14 +74,21 @@ public class UserProfileController {
         }
     }
 
-//    @DeleteMapping(value = "/delete/{userId}")
-//    public ResponseEntity<?> deleteUser(@PathVariable int userId) {
-//        UserProfile userProfile = userProfileRepository.findById(userId).orElse(null);
-//        if (userProfile == null) {
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        } else {
-//            userProfileRepository.deleteById(userId);
-//            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-//        }
-//    }
+    @DeleteMapping(value = "/delete")
+    public ResponseEntity<?> deleteUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
+        Optional<UserProfile> opt =
+                // Look up user in DB
+                userProfileRepository.findByEmail(
+                        // Get email from token
+                        jwtTokenUtil.getUsernameFromToken(
+                                // Remove Bearer prefix from token
+                                token.substring(7)));
+        // Can't find user in DB
+        if (opt.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            userProfileRepository.deleteById(Math.toIntExact(opt.get().getId()));
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+    }
 }
