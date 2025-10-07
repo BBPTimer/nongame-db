@@ -32,6 +32,10 @@ public class UserProfileServiceImpl implements  UserProfileService {
         return mapToProfileDTO(userProfile);
     }
 
+    public String encodePassword (String plainTextPassword) {
+        return encoder.encode(plainTextPassword);
+    }
+
     // Map values from entity to DTO
     private UserProfileRequestDTO mapToProfileDTO(UserProfile profileEntity) {
         return modelMapper.map(profileEntity, UserProfileRequestDTO.class);

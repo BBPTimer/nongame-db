@@ -1,9 +1,10 @@
 package com.nongame.backend.controllers;
 
-import com.nongame.backend.dto.UserProfileDTO;
+import com.nongame.backend.dto.request.PwChangeRequestDTO;
 import com.nongame.backend.dto.response.UserProfileNoPwDTO;
 import com.nongame.backend.models.UserProfile;
 import com.nongame.backend.repositories.UserProfileRepository;
+import com.nongame.backend.services.UserProfileServiceImpl;
 import com.nongame.backend.utils.JwtTokenUtil;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
@@ -16,7 +17,10 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/users")
 public class UserProfileController {
-    ModelMapper modelMapper = new ModelMapper();
+    private final ModelMapper modelMapper = new ModelMapper();
+
+    @Autowired
+    private UserProfileServiceImpl userProfileService;
 
     @Autowired
     UserProfileRepository userProfileRepository;
@@ -47,15 +51,26 @@ public class UserProfileController {
         }
     }
 
-    @PutMapping(value = "/updatePW/{userId}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updatePW(@PathVariable int userId, @Valid @RequestBody UserProfileDTO userData) {
-        UserProfile userProfile = userProfileRepository.findById(userId).orElse(null);
-        if (userProfile == null) {
+    @PutMapping(value = "/pwChange", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> passwordChange(@Valid @RequestBody PwChangeRequestDTO pwChangeRequestDTO, @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
+        Optional<UserProfile> opt =
+                // Look up user in DB
+                userProfileRepository.findByEmail(
+                        // Get email from token
+                        jwtTokenUtil.getUsernameFromToken(
+                                // Remove Bearer prefix from token
+                                token.substring(7)));
+        // Can't find user in DB
+        if (opt.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } else {
-            userProfile.setPassword(userData.getPassword());
+            // Get UserProfile object from Optional
+            UserProfile userProfile = opt.get();
+            // Update password to newPassword from request body
+            userProfile.setPassword(userProfileService.encodePassword(pwChangeRequestDTO.getNewPassword()));
+            // Update DB
             userProfileRepository.save(userProfile);
-            return new ResponseEntity<>(userProfile, HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.OK);
         }
     }
 
