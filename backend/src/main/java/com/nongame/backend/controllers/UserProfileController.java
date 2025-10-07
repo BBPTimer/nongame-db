@@ -8,13 +8,11 @@ import com.nongame.backend.utils.JwtTokenUtil;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Objects;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
@@ -33,21 +31,43 @@ public class UserProfileController {
 //        return new ResponseEntity<>(allUserProfiles, HttpStatus.OK);
 //    }
 
-    @GetMapping(value = "/details/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getUserByID(@PathVariable int userId, @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
-        UserProfile userProfile = userProfileRepository.findById(userId).orElse(null);
-        if (userProfile == null) {
+//    @GetMapping(value = "/details/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<?> getUserByID(@PathVariable int userId, @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
+//        UserProfile userProfile = userProfileRepository.findById(userId).orElse(null);
+//        if (userProfile == null) {
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        } else {
+//            // Remove Bearer prefix from token
+//            token = token.substring(7);
+//            // Compare username from token to username from request
+//            if (!Objects.equals(jwtTokenUtil.getUsernameFromToken(token), userProfile.getEmail())) {
+//                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+//            } else {
+//                UserProfileNoPwDTO userProfileNoPwDTO = modelMapper.map(userProfile, UserProfileNoPwDTO.class);
+//                return new ResponseEntity<>(userProfileNoPwDTO, HttpStatus.OK);
+//            }
+//        }
+//    }
+
+    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
+        Optional<UserProfile> opt =
+                // Look up user in DB
+                userProfileRepository.findByEmail(
+                        // Get email from token
+                        jwtTokenUtil.getUsernameFromToken(
+                                // Remove Bearer prefix from token
+                                token.substring(7)));
+        if (opt.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } else {
-            // Remove Bearer prefix from token
-            token = token.substring(7);
-            // Compare username from token to username from request
-            if (!Objects.equals(jwtTokenUtil.getUsernameFromToken(token), userProfile.getEmail())) {
-                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-            } else {
-                UserProfileNoPwDTO userProfileNoPwDTO = modelMapper.map(userProfile, UserProfileNoPwDTO.class);
-                return new ResponseEntity<>(userProfileNoPwDTO, HttpStatus.OK);
-            }
+            return new ResponseEntity<>(
+                    // Map UserProfile object to UserProfileNoPwDTO object for return
+                    modelMapper.map(
+                            // Get UserProfile object from Optional
+                            opt.get()
+                            , UserProfileNoPwDTO.class),
+                    HttpStatus.OK);
         }
     }
 
@@ -58,13 +78,12 @@ public class UserProfileController {
 //        return new ResponseEntity<>(userProfile, HttpStatus.CREATED);
 //    }
 
-    @PutMapping(value = "/updatePW/{userId}", consumes=MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/updatePW/{userId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updatePW(@PathVariable int userId, @Valid @RequestBody UserProfileDTO userData) {
         UserProfile userProfile = userProfileRepository.findById(userId).orElse(null);
         if (userProfile == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        else {
+        } else {
             userProfile.setPassword(userData.getPassword());
             userProfileRepository.save(userProfile);
             return new ResponseEntity<>(userProfile, HttpStatus.OK);
