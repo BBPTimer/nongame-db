@@ -43,11 +43,11 @@ public class Deck {
         this.deckName = deckName;
     }
 
-    public UserProfile getUser() {
+    public UserProfile getUserProfile() {
         return userProfile;
     }
 
-    public void setUser(UserProfile userProfile) {
+    public void setUserProfile(UserProfile userProfile) {
         this.userProfile = userProfile;
     }
 

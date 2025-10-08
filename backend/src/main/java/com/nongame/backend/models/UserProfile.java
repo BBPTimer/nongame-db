@@ -1,5 +1,6 @@
 package com.nongame.backend.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
@@ -16,6 +17,7 @@ public class UserProfile {
     @Column(unique = true)
     private String email;
 
+    @JsonIgnore
     private String password;
 
     @OneToMany(mappedBy = "userProfile", cascade = CascadeType.ALL)

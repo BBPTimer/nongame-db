@@ -1,11 +1,10 @@
 package com.nongame.backend.controllers;
 
 import com.nongame.backend.dto.request.PwChangeRequestDTO;
-import com.nongame.backend.dto.response.UserProfileNoPwDTO;
 import com.nongame.backend.models.UserProfile;
 import com.nongame.backend.repositories.UserProfileRepository;
 import com.nongame.backend.services.UserProfileServiceImpl;
-import com.nongame.backend.utils.JwtTokenUtil;
+import com.nongame.backend.utils.GetUserFromToken;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,43 +22,26 @@ public class UserProfileController {
     private UserProfileServiceImpl userProfileService;
 
     @Autowired
-    UserProfileRepository userProfileRepository;
+    private UserProfileRepository userProfileRepository;
 
     @Autowired
-    private JwtTokenUtil jwtTokenUtil;
+    private GetUserFromToken getUserFromToken;
 
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
-        Optional<UserProfile> opt =
-                // Look up user in DB
-                userProfileRepository.findByEmail(
-                        // Get email from token
-                        jwtTokenUtil.getUsernameFromToken(
-                                // Remove Bearer prefix from token
-                                token.substring(7)));
+        Optional<UserProfile> opt = getUserFromToken.getUserFromToken(token);
         // Can't find user in DB
         if (opt.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } else {
-            return new ResponseEntity<>(
-                    // Map UserProfile object to UserProfileNoPwDTO object for return
-                    modelMapper.map(
-                            // Get UserProfile object from Optional
-                            opt.get()
-                            , UserProfileNoPwDTO.class),
-                    HttpStatus.OK);
+            UserProfile userProfile = opt.get();
+            return new ResponseEntity<>(userProfile, HttpStatus.OK);
         }
     }
 
     @PutMapping(value = "/pwChange", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> passwordChange(@Valid @RequestBody PwChangeRequestDTO pwChangeRequestDTO, @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
-        Optional<UserProfile> opt =
-                // Look up user in DB
-                userProfileRepository.findByEmail(
-                        // Get email from token
-                        jwtTokenUtil.getUsernameFromToken(
-                                // Remove Bearer prefix from token
-                                token.substring(7)));
+        Optional<UserProfile> opt = getUserFromToken.getUserFromToken(token);
         // Can't find user in DB
         if (opt.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -76,13 +58,7 @@ public class UserProfileController {
 
     @DeleteMapping(value = "/delete")
     public ResponseEntity<?> deleteUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
-        Optional<UserProfile> opt =
-                // Look up user in DB
-                userProfileRepository.findByEmail(
-                        // Get email from token
-                        jwtTokenUtil.getUsernameFromToken(
-                                // Remove Bearer prefix from token
-                                token.substring(7)));
+        Optional<UserProfile> opt = getUserFromToken.getUserFromToken(token);
         // Can't find user in DB
         if (opt.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

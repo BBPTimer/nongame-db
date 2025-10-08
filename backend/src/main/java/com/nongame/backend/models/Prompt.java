@@ -2,7 +2,6 @@ package com.nongame.backend.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
 
 import java.util.Objects;
 

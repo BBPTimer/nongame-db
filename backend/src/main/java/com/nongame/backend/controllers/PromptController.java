@@ -6,8 +6,7 @@ import com.nongame.backend.models.Prompt;
 import com.nongame.backend.models.UserProfile;
 import com.nongame.backend.repositories.DeckRepository;
 import com.nongame.backend.repositories.PromptRepository;
-import com.nongame.backend.repositories.UserProfileRepository;
-import com.nongame.backend.utils.JwtTokenUtil;
+import com.nongame.backend.utils.GetUserFromToken;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -23,16 +22,13 @@ import java.util.Optional;
 @RequestMapping("/api/prompts")
 public class PromptController {
     @Autowired
-    PromptRepository promptRepository;
+    private PromptRepository promptRepository;
 
     @Autowired
-    DeckRepository deckRepository;
+    private DeckRepository deckRepository;
 
     @Autowired
-    UserProfileRepository userProfileRepository;
-
-    @Autowired
-    private JwtTokenUtil jwtTokenUtil;
+    private GetUserFromToken getUserFromToken;
 
     @PostMapping(value = "/add", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addNewPrompt(@Valid @RequestBody PromptDTO promptData, @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
@@ -41,19 +37,13 @@ public class PromptController {
         if (deck == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } else {
-            Optional<UserProfile> opt =
-                    // Look up user in DB
-                    userProfileRepository.findByEmail(
-                            // Get email from token
-                            jwtTokenUtil.getUsernameFromToken(
-                                    // Remove Bearer prefix from token
-                                    token.substring(7)));
+            Optional<UserProfile> opt = getUserFromToken.getUserFromToken(token);
             // Can't find user in DB
             if (opt.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
             // User Id from token doesn't match User Id from deck
-            else if (!Objects.equals(opt.get().getId(), deck.getUser().getId())) {
+            else if (!Objects.equals(opt.get().getId(), deck.getUserProfile().getId())) {
                 return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
             } else {
                 Prompt prompt = new Prompt(promptData.getPromptText(), deck);
@@ -70,14 +60,13 @@ public class PromptController {
         if (prompt == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        // Get UserProfile from DB belonging to email found in token
-        Optional<UserProfile> opt = userProfileRepository.findByEmail(jwtTokenUtil.getUsernameFromToken(token.substring(7)));
+        Optional<UserProfile> opt = getUserFromToken.getUserFromToken(token);
         // Can't find user in DB
         if (opt.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         // User Id from token doesn't match User Id from prompt
-        else if (!Objects.equals(opt.get().getId(), prompt.getDeck().getUser().getId())) {
+        else if (!Objects.equals(opt.get().getId(), prompt.getDeck().getUserProfile().getId())) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         } else {
             prompt.setPromptText(promptData.getPromptText());
@@ -93,14 +82,13 @@ public class PromptController {
         if (prompt == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        // Get UserProfile from DB belonging to email found in token
-        Optional<UserProfile> opt = userProfileRepository.findByEmail(jwtTokenUtil.getUsernameFromToken(token.substring(7)));
+        Optional<UserProfile> opt = getUserFromToken.getUserFromToken(token);
         // Can't find user in DB
         if (opt.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         // User Id from token doesn't match User Id from prompt
-        else if (!Objects.equals(opt.get().getId(), prompt.getDeck().getUser().getId())) {
+        else if (!Objects.equals(opt.get().getId(), prompt.getDeck().getUserProfile().getId())) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         } else {
             promptRepository.deleteById(promptId);
