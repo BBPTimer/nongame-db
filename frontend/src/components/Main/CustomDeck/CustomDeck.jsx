@@ -1,12 +1,13 @@
-import { useEffect, useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import Deck from "../../../classes/Deck";
 import Modal from "../../common/Modal";
+import { AuthContext } from "../../../contexts/AuthContext";
 import { readFormData } from "../../../common/utils";
 
 const CustomDeck = () => {
-  const [selectedUser, setSelectedUser] = useState(1);
+  const { auth } = use(AuthContext);
 
-  // Utility functions
+  // Utility function
   const closeOtherForms = (callback) => {
     setIsAddingDeck(false);
     setIsEditingDeckName(false);
@@ -22,13 +23,15 @@ const CustomDeck = () => {
   // Deck name if user has 0 decks
   const firstDeckName = "My First Deck";
 
-  const fetchDecks = async (userId) => {
+  const fetchDecks = async () => {
     const decks = [];
 
     try {
-      const response = await fetch(
-        "http://localhost:8080/api/users/details/" + userId
-      );
+      const response = await fetch("http://localhost:8080/api/users", {
+        headers: {
+          Authorization: "Bearer " + auth.token,
+        },
+      });
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -53,14 +56,14 @@ const CustomDeck = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: "Bearer " + auth.token,
           },
           body: JSON.stringify({
             deckName: firstDeckName,
-            userId: selectedUser,
           }),
         });
         // Re-fetch data now that user has first deck
-        fetchDecks(selectedUser);
+        fetchDecks();
       }
 
       setAllDecks(decks);
@@ -69,7 +72,7 @@ const CustomDeck = () => {
 
   // Fetch on page load
   useEffect(() => {
-    fetchDecks(selectedUser);
+    fetchDecks();
   }, []);
 
   // Render page after fetch populates allDecks
@@ -92,14 +95,14 @@ const CustomDeck = () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: "Bearer " + auth.token,
       },
       body: JSON.stringify({
         deckName: formJson.newDeck,
-        userId: selectedUser,
       }),
     });
     setIsAddingDeck(false);
-    fetchDecks(selectedUser);
+    fetchDecks();
     // Display newly-created deck
     setSelectedDeckIndex(allDecks.length);
   };
@@ -123,15 +126,15 @@ const CustomDeck = () => {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          Authorization: "Bearer " + auth.token,
         },
         body: JSON.stringify({
           deckName: formJson.updatedDeckName,
-          userId: selectedUser,
         }),
       }
     );
     setIsEditingDeckName(false);
-    fetchDecks(selectedUser);
+    fetchDecks();
   };
 
   // Delete deck
@@ -140,8 +143,11 @@ const CustomDeck = () => {
       // DELETE request
       await fetch("http://localhost:8080/api/decks/delete/" + deckId, {
         method: "DELETE",
+        headers: {
+          Authorization: "Bearer " + auth.token,
+        },
       });
-      fetchDecks(selectedUser);
+      fetchDecks();
       // Display first deck
       setSelectedDeckIndex(0);
     }
@@ -165,6 +171,7 @@ const CustomDeck = () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: "Bearer " + auth.token,
       },
       body: JSON.stringify({
         promptText: formJson.newPromptText,
@@ -172,7 +179,7 @@ const CustomDeck = () => {
       }),
     });
     setIsAddingPrompt(false);
-    fetchDecks(selectedUser);
+    fetchDecks();
   };
 
   // Edit prompt
@@ -199,6 +206,7 @@ const CustomDeck = () => {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          Authorization: "Bearer " + auth.token,
         },
         body: JSON.stringify({
           promptText: formJson.updatedPromptText,
@@ -208,7 +216,7 @@ const CustomDeck = () => {
     setIsEditingPrompt(false);
     // Clean up current prompt variable
     setCurrentPrompt(null);
-    fetchDecks(selectedUser);
+    fetchDecks();
   };
 
   const handleCancelPromptClick = () => {
@@ -222,8 +230,11 @@ const CustomDeck = () => {
       // DELETE request
       await fetch("http://localhost:8080/api/prompts/delete/" + promptId, {
         method: "DELETE",
+        headers: {
+          Authorization: "Bearer " + auth.token,
+        },
       });
-      fetchDecks(selectedUser);
+      fetchDecks();
     }
   };
 
