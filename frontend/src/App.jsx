@@ -1,13 +1,18 @@
-import { useState, useRef } from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router";
+import { useState, useRef, use } from "react";
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router";
 import { GameContext } from "./GameContext";
+import { AuthContext } from "./contexts/AuthContext";
 import Header from "./components/Header";
 import Main from "./components/Main";
 import Instructions from "./components/Instructions";
 import CustomDeck from "./components/Main/CustomDeck/CustomDeck";
+import RegisterPage from "./components/auth/RegisterPage";
+import LoginPage from "./components/auth/LoginPage";
 import { shuffle, resetDeck } from "./common/utils";
 
 function App() {
+  const { auth } = use(AuthContext);
+
   // Initialize state variables
   const [isNewGame, setIsNewGame] = useState(true);
   const [promptTypes, setPromptTypes] = useState({});
@@ -128,9 +133,14 @@ function App() {
       <Router>
         <Header />
         <Routes>
+          <Route path="/" element={<Main />} />
           <Route path="/instructions" element={<Instructions />} />
-          <Route path="/custom" element={<CustomDeck />} />
-          <Route path="*" element={<Main />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          {auth.isAuthenticated && (
+            <Route path="/custom" element={<CustomDeck />} />
+          )}
+          <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </Router>
       <br />
