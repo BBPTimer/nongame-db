@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { GameContext } from "../../../GameContext";
+import { GameContext } from "../../../contexts/GameContext";
 
 const Dice = () => {
   const {

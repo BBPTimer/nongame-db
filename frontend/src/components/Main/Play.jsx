@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { GameContext } from "../../GameContext";
+import { GameContext } from "../../contexts/GameContext";
 import Board from "./Play/Board";
 import Dice from "./Play/Dice";
 import UpNext from "./Play/UpNext";

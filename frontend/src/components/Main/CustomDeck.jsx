@@ -1,13 +1,14 @@
-import { use, useEffect, useRef, useState } from "react";
+import { use, useRef, useState } from "react";
 import { useNavigate } from "react-router";
-import { AuthContext } from "../../../contexts/AuthContext";
-import Deck from "../../../classes/Deck";
-import Modal from "../../common/Modal";
-import { readFormData } from "../../../common/utils";
-import { removeTokenFromStorage } from "../../../services/storageService";
+import { AuthContext } from "../../contexts/AuthContext";
+import Modal from "../common/Modal";
+import { readFormData } from "../../common/utils";
+import { removeTokenFromStorage } from "../../services/storageService";
+import { DeckContext } from "../../contexts/DeckContext";
 
 const CustomDeck = () => {
   const { auth, setAuth } = use(AuthContext);
+  const { isLoading, customDecks, fetchDecks } = use(DeckContext);
 
   // Utility function
   const closeOtherForms = (callback) => {
@@ -17,72 +18,6 @@ const CustomDeck = () => {
     setIsEditingPrompt(false);
     callback(true);
   };
-
-  // Fetch
-  const [isLoading, setIsLoading] = useState(true);
-  const [allDecks, setAllDecks] = useState(null);
-
-  // Deck name if user has 0 decks
-  const firstDeckName = "My First Deck";
-
-  const fetchDecks = async () => {
-    const decks = [];
-
-    try {
-      const response = await fetch("http://localhost:8080/api/users", {
-        headers: {
-          Authorization: "Bearer " + auth.token,
-        },
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(
-          errorData.message || "ERROR - Status " + response.status
-        );
-      } else {
-        const data = await response.json();
-
-        data.decks.forEach((deck) => {
-          let newDeck = new Deck(deck.id, deck.deckName, deck.prompts);
-          decks.push(newDeck);
-        });
-      }
-    } catch (error) {
-      console.error(error.message);
-    } finally {
-      // Add deck if user has 0 decks
-      if (!decks.length) {
-        // POST request
-        await fetch("http://localhost:8080/api/decks/add", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + auth.token,
-          },
-          body: JSON.stringify({
-            deckName: firstDeckName,
-          }),
-        });
-        // Re-fetch data now that user has first deck
-        fetchDecks();
-      }
-
-      setAllDecks(decks);
-    }
-  };
-
-  // Fetch on page load
-  useEffect(() => {
-    fetchDecks();
-  }, []);
-
-  // Render page after fetch populates allDecks
-  useEffect(() => {
-    if (allDecks !== null) {
-      setIsLoading(false);
-    }
-  }, [allDecks]);
 
   // Add deck
   const [isAddingDeck, setIsAddingDeck] = useState(false);
@@ -106,7 +41,7 @@ const CustomDeck = () => {
     setIsAddingDeck(false);
     fetchDecks();
     // Display newly-created deck
-    setSelectedDeckIndex(allDecks.length);
+    setSelectedDeckIndex(customDecks.length);
   };
 
   // Select deck
@@ -123,7 +58,7 @@ const CustomDeck = () => {
     // POST request
     await fetch(
       "http://localhost:8080/api/decks/update/" +
-        allDecks[selectedDeckIndex].id,
+        customDecks[selectedDeckIndex].id,
       {
         method: "PUT",
         headers: {
@@ -177,7 +112,7 @@ const CustomDeck = () => {
       },
       body: JSON.stringify({
         promptText: formJson.newPromptText,
-        deckId: allDecks[selectedDeckIndex].id,
+        deckId: customDecks[selectedDeckIndex].id,
       }),
     });
     setIsAddingPrompt(false);
@@ -323,7 +258,7 @@ const CustomDeck = () => {
               <input
                 type="text"
                 name="updatedDeckName"
-                defaultValue={allDecks[selectedDeckIndex].deckName}
+                defaultValue={customDecks[selectedDeckIndex].deckName}
                 maxLength={"25"}
                 required
               ></input>
@@ -343,8 +278,8 @@ const CustomDeck = () => {
               >
                 library_add
               </span>{" "}
-              {allDecks[selectedDeckIndex]
-                ? allDecks[selectedDeckIndex].deckName
+              {customDecks[selectedDeckIndex]
+                ? customDecks[selectedDeckIndex].deckName
                 : firstDeckName}{" "}
               <span
                 onClick={() => closeOtherForms(setIsEditingDeckName)}
@@ -354,7 +289,9 @@ const CustomDeck = () => {
                 edit
               </span>
               <span
-                onClick={() => handleDeleteDeck(allDecks[selectedDeckIndex].id)}
+                onClick={() =>
+                  handleDeleteDeck(customDecks[selectedDeckIndex].id)
+                }
                 className="material-symbols-outlined shake"
                 title="Delete Deck"
               >
@@ -395,7 +332,7 @@ const CustomDeck = () => {
               onChange={(event) => setSelectedDeckIndex(event.target.value)}
               value={selectedDeckIndex}
             >
-              {allDecks.map((deck, index) => {
+              {customDecks.map((deck, index) => {
                 return (
                   <option key={deck.id} value={index}>
                     {deck.deckName}
@@ -481,8 +418,8 @@ const CustomDeck = () => {
                 </td>
                 <td></td>
               </tr>
-              {allDecks[selectedDeckIndex] &&
-                allDecks[selectedDeckIndex].prompts.map((prompt) => {
+              {customDecks[selectedDeckIndex] &&
+                customDecks[selectedDeckIndex].prompts.map((prompt) => {
                   return (
                     <tr key={prompt.id}>
                       <td className="custom-deck-list-item" width={"100%"}>

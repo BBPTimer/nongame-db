@@ -1,19 +1,33 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, use, useEffect, useState } from "react";
+import { AuthContext } from "./AuthContext";
 import Deck from "../classes/Deck";
 
 export const DeckContext = createContext();
 
-export const DeckProvider = ({ children }) => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [allDecks, setAllDecks] = useState(null);
+export const DeckContextProvider = ({ children }) => {
+  const { auth } = use(AuthContext);
 
-  const fetchDecks = async (userId) => {
+  // Fetch
+  const [isLoading, setIsLoading] = useState(true);
+  const [customDecks, setCustomDecks] = useState(null);
+
+  // Deck name if user has 0 decks
+  const firstDeckName = "My First Deck";
+
+  const fetchDecks = async () => {
+    // Don't attempt fetch if user is not logged in
+    if (!auth.isAuthenticated) {
+      return;
+    }
+
     const decks = [];
 
     try {
-      const response = await fetch(
-        "http://localhost:8080/api/users/details/" + userId
-      );
+      const response = await fetch("http://localhost:8080/api/users", {
+        headers: {
+          Authorization: "Bearer " + auth.token,
+        },
+      });
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -23,35 +37,57 @@ export const DeckProvider = ({ children }) => {
       } else {
         const data = await response.json();
 
-        console.log(data);
-
         data.decks.forEach((deck) => {
-          let newDeck = new Deck(deck.id, deck.deckName);
+          let newDeck = new Deck(deck.id, deck.deckName, deck.prompts);
           decks.push(newDeck);
         });
       }
     } catch (error) {
       console.error(error.message);
     } finally {
-      setAllDecks(decks);
+      // Add deck if user has 0 decks
+      if (!decks.length) {
+        // POST request
+        await fetch("http://localhost:8080/api/decks/add", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + auth.token,
+          },
+          body: JSON.stringify({
+            deckName: firstDeckName,
+          }),
+        });
+        // Re-fetch data now that user has first deck
+        fetchDecks();
+      }
+
+      setCustomDecks(decks);
     }
   };
 
+  // Fetch on page load
   useEffect(() => {
-    fetchDecks(1);
+    fetchDecks();
   }, []);
 
+  // Fetch after login
   useEffect(() => {
-    if (allDecks !== null) {
+    fetchDecks();
+  }, [auth.isAuthenticated]);
+
+  // Render page after fetch populates customDecks
+  useEffect(() => {
+    if (customDecks !== null) {
       setIsLoading(false);
     }
-  }, []);
+  }, [customDecks]);
 
   return (
     <DeckContext.Provider
       value={{
         isLoading,
-        allDecks,
+        customDecks,
         fetchDecks,
       }}
     >

@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { GameContext } from "../../GameContext";
+import { GameContext } from "../../contexts/GameContext";
 import Modal from "../common/Modal";
 import PlayerForms from "./Setup/PlayerForms";
 import NewGameButton from "../common/NewGameButton";

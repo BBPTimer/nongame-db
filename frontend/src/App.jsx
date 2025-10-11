@@ -1,11 +1,11 @@
 import { useState, useRef, use } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router";
-import { GameContext } from "./GameContext";
+import { GameContext } from "./contexts/GameContext";
 import { AuthContext } from "./contexts/AuthContext";
 import Header from "./components/Header";
 import Main from "./components/Main";
 import Instructions from "./components/Instructions";
-import CustomDeck from "./components/Main/CustomDeck/CustomDeck";
+import CustomDeck from "./components/Main/CustomDeck";
 import RegisterPage from "./components/auth/RegisterPage";
 import LoginPage from "./components/auth/LoginPage";
 import { shuffle, resetDeck } from "./common/utils";

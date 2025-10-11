@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { GameContext } from "../../GameContext";
+import { GameContext } from "../../contexts/GameContext";
 import NewGameButton from "../common/NewGameButton";
 
 const Results = () => {

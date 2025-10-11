@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { GameContext } from "../../../../GameContext";
+import { GameContext } from "../../../../contexts/GameContext";
 
 const PlayerForm = ({ player }) => {
   const { players, setPlayers } = useContext(GameContext);
