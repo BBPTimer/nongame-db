@@ -1,13 +1,31 @@
 import { createContext, use, useEffect, useState } from "react";
 import { AuthContext } from "./AuthContext";
 import Deck from "../classes/Deck";
+import defaultData from "../defaultDecks.json";
 
 export const DeckContext = createContext();
 
 export const DeckContextProvider = ({ children }) => {
   const { auth } = use(AuthContext);
 
-  // Fetch
+  // Default decks
+  const [defaultDecks, setDefaultDecks] = useState([]);
+
+  const loadDefaultDecks = () => {
+    let decks = [];
+    defaultData.decks.forEach((deck) => {
+      let newDeck = new Deck(deck.id, deck.deckName, deck.prompts);
+      decks.push(newDeck);
+    });
+    setDefaultDecks(decks);
+  };
+
+  // Load default decks on page load
+  useEffect(() => {
+    loadDefaultDecks();
+  }, []);
+
+  // Fetch custom decks
   const [isLoading, setIsLoading] = useState(true);
   const [customDecks, setCustomDecks] = useState(null);
 
@@ -86,9 +104,11 @@ export const DeckContextProvider = ({ children }) => {
   return (
     <DeckContext.Provider
       value={{
+        defaultDecks,
         isLoading,
         customDecks,
         fetchDecks,
+        firstDeckName,
       }}
     >
       {children}

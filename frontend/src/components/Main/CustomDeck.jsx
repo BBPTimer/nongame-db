@@ -8,7 +8,7 @@ import { DeckContext } from "../../contexts/DeckContext";
 
 const CustomDeck = () => {
   const { auth, setAuth } = use(AuthContext);
-  const { isLoading, customDecks, fetchDecks } = use(DeckContext);
+  const { isLoading, customDecks, fetchDecks, firstDeckName } = use(DeckContext);
 
   // Utility function
   const closeOtherForms = (callback) => {
