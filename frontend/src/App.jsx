@@ -4,7 +4,7 @@ import { GameContext } from "./GameContext";
 import Header from "./components/Header";
 import Main from "./components/Main";
 import Instructions from "./components/Instructions";
-import CustomDeckDB from "./components/CustomDeckDB";
+import CustomDeck from "./components/Main/CustomDeck/CustomDeck";
 import { shuffle, resetDeck } from "./common/utils";
 
 function App() {
@@ -129,7 +129,7 @@ function App() {
         <Header />
         <Routes>
           <Route path="/instructions" element={<Instructions />} />
-          <Route path="/custom" element={<CustomDeckDB />} />
+          <Route path="/custom" element={<CustomDeck />} />
           <Route path="*" element={<Main />} />
         </Routes>
       </Router>

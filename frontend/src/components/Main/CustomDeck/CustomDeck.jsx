@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import Deck from "../classes/Deck";
-import Modal from "./common/Modal";
+import Deck from "../../../classes/Deck";
+import Modal from "../../common/Modal";
+import { readFormData } from "../../../common/utils";
 
-const CustomDeckDB = () => {
+const CustomDeck = () => {
   const [selectedUser, setSelectedUser] = useState(1);
 
   // Utility functions
@@ -12,13 +13,6 @@ const CustomDeckDB = () => {
     setIsAddingPrompt(false);
     setIsEditingPrompt(false);
     callback(true);
-  };
-
-  const readFormData = (event) => {
-    const form = event.target;
-    const formData = new FormData(form);
-    const formJson = Object.fromEntries(formData.entries());
-    return formJson;
   };
 
   // Fetch
@@ -497,4 +491,4 @@ const CustomDeckDB = () => {
   }
 };
 
-export default CustomDeckDB;
+export default CustomDeck;
