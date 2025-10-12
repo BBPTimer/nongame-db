@@ -1,6 +1,7 @@
-import { useContext, useEffect, useRef } from "react";
+import { use, useContext, useEffect, useRef } from "react";
 import { Textfit } from "react-textfit";
 import { GameContext } from "../../../../contexts/GameContext";
+import { DeckContext } from "../../../../contexts/DeckContext";
 
 const Prompt = () => {
   const {
@@ -12,11 +13,11 @@ const Prompt = () => {
     setPrompt,
     activeSpace,
     totalTurns,
-    customDeck,
-    customDeckName,
     unusedPrompts,
     feelings,
   } = useContext(GameContext);
+
+  const { allDecks, selectedDeckId } = use(DeckContext);
 
   const isFirstRender = useRef();
 
@@ -48,19 +49,11 @@ const Prompt = () => {
     isFirstRender.current = true;
   }, []);
 
-  // Fetch prompts
+  // Get prompts
   useEffect(() => {
-    // Only fetches prompts if this is the first turn
+    // Only gets prompts if this is the first turn
     if (totalTurns === 0) {
-      // If user chose custom deck, set prompts from customDeck array
-      if (localStorage.getItem("deck") === customDeckName) {
-        setPrompts(customDeck.map((prompt) => prompt.promptText));
-        // Otherwise fetch deck
-      } else {
-        fetch("/decks/" + localStorage.getItem("deck") + ".txt")
-          .then((response) => response.text())
-          .then((data) => setPrompts(data.split("\n")));
-      }
+      setPrompts(allDecks.find((deck) => deck.id == selectedDeckId).prompts.map((prompt) => prompt.promptText));
       // Make copy of original prompts array to prevent need to re-fetch
       unusedPrompts.current = prompts.slice();
     }
