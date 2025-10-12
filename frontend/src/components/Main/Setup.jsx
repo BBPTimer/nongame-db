@@ -1,5 +1,6 @@
-import { useContext, useState } from "react";
+import { use, useContext, useState } from "react";
 import { GameContext } from "../../contexts/GameContext";
+import { DeckContext } from "../../contexts/DeckContext";
 import Modal from "../common/Modal";
 import PlayerForms from "./Setup/PlayerForms";
 import NewGameButton from "../common/NewGameButton";
@@ -14,27 +15,29 @@ const Setup = () => {
     numberOfPlayers,
     setNumberOfPlayers,
     setIsSetupComplete,
-    customDeck,
-    customDeckName,
   } = useContext(GameContext);
+
+  const { allDecks, selectedDeckId, setSelectedDeckId } = use(DeckContext);
 
   // useState to re-render Modal component when deck changes
   const [promptModalText, setPromptModalText] = useState("");
 
   // Function to get modal content
   const getPromptModalText = () => {
-    setPromptModalText("Loading list of prompts!");
-    // If user chose custom deck, setModalContent with customDeck array
-    if (localStorage.getItem("deck") === customDeckName) {
-      setPromptModalText(
-        customDeck.map((prompt) => prompt.promptText).join("\n")
-      );
-      // Otherwise fetch deck
-    } else {
-      fetch("/decks/" + localStorage.getItem("deck") + ".txt")
-        .then((response) => response.text())
-        .then((data) => setPromptModalText(data));
+    // Early return if no decks
+    if (allDecks.length === 0) {
+      return;
     }
+
+    let promptsArray = [];
+    // Find deck in allDecks whose Id matches selectedDeckId, loop through prompts and push to promptsArray
+    for (let prompt of allDecks.find((deck) => deck.id == selectedDeckId)
+      .prompts) {
+      promptsArray.push(prompt.promptText);
+    }
+    
+    // Join promptsArray into single string with new line between elements
+    setPromptModalText(promptsArray.join("\n"));
   };
 
   const handleNumberOfPlayersChange = (event) => {
@@ -51,28 +54,22 @@ const Setup = () => {
     );
   };
 
-  let deckOptions = [
-    "All Ages (Deep)",
-    "All Ages (Lighthearted)",
-    "Couples (Deep)",
-    "Couples (Lighthearted)",
-    "Families (Deep)",
-    "Families (Lighthearted)",
-    "Kids (Deep)",
-    "Kids (Lighthearted)",
-    "Seniors  (Lighthearted)",
-    "Seniors (Deep)",
-    "Teens  (Lighthearted)",
-    "Teens (Deep)",
-    "Veterans",
-  ];
+  // Render deck options
+  const deckOptions = allDecks.map((deck) => {
+    return (
+      // Return option only if deck contains at least 1 prompt
+      deck.prompts.length && (
+        <option key={deck.id} value={deck.id}>
+          {deck.deckName}
+        </option>
+      )
+    );
+  });
 
-  // Render deck option divs
-  const deckOptionDivs = deckOptions.map((deckOption, index) => (
-    <option key={index} value={deckOption}>
-      {deckOption}
-    </option>
-  ));
+  const handleDeckChange = (event) => {
+    setSelectedDeckId(event.target.value);
+    localStorage.setItem("deck", event.target.value);
+  };
 
   // Render number of player options
   const numberOfPlayerOptions = [];
@@ -139,16 +136,11 @@ const Setup = () => {
           <label htmlFor="deck">Prompt deck: </label>
           <select
             name="deck"
-            onChange={(event) => {
-              localStorage.setItem("deck", event.target.value);
-            }}
-            defaultValue={localStorage.getItem("deck")}
+            value={selectedDeckId}
+            onChange={handleDeckChange}
             required
           >
-            {deckOptionDivs}
-            {customDeck.length > 0 && (
-              <option value={customDeckName}>{customDeckName}</option>
-            )}
+            {deckOptions}
           </select>{" "}
           <Modal
             modalContent={promptModalText}

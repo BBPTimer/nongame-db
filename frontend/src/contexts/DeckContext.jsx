@@ -101,6 +101,16 @@ export const DeckContextProvider = ({ children }) => {
     }
   }, [customDecks]);
 
+  // Concatenate defaultDecks and customDecks
+  const [allDecks, setAllDecks] = useState([]);
+
+  // Concatenate decks when customDecks changes
+  useEffect(() => {
+    customDecks && setAllDecks(defaultDecks.concat(customDecks));
+  }, [customDecks]);
+
+  const [selectedDeckId, setSelectedDeckId] = useState(localStorage.getItem("deck") || 1);
+
   return (
     <DeckContext.Provider
       value={{
@@ -109,6 +119,9 @@ export const DeckContextProvider = ({ children }) => {
         customDecks,
         fetchDecks,
         firstDeckName,
+        allDecks,
+        selectedDeckId,
+        setSelectedDeckId
       }}
     >
       {children}

@@ -8,7 +8,7 @@ const shuffle = (array) => {
 };
 
 const resetDeck = () => {
-  localStorage.setItem("deck", "All Ages (Deep)");
+  localStorage.removeItem("deck");
 };
 
 const readFormData = (event) => {

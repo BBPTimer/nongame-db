@@ -25,8 +25,6 @@ function App() {
   const [roll, setRoll] = useState(null);
   const [activeSpace, setActiveSpace] = useState(null);
   const [totalTurns, setTotalTurns] = useState(null);
-  const [customDeck, setCustomDeck] = useState([]);
-  const [customDeckName, setCustomDeckName] = useState("");
 
   const unusedPrompts = useRef([]);
   const feelings = useRef([]);
@@ -81,17 +79,6 @@ function App() {
     setRoll(1);
     setActiveSpace(0);
     setTotalTurns(0);
-    // Set state customDeck to LS value
-    if (localStorage.getItem("customDeck")) {
-      // Parse LS JSON string back into array
-      setCustomDeck(JSON.parse(localStorage.getItem("customDeck")));
-    }
-    // Set state customDeckName to LS value or "Custom Deck" if no LS value
-    setCustomDeckName(localStorage.getItem("customDeckName") || "Custom Deck");
-    // Set LS customDeckName to "Custom Deck" if no LS value
-    if (!localStorage.getItem("customDeckName")) {
-      localStorage.setItem("customDeckName", "Custom Deck");
-    }
   };
 
   // Call newGame function if isNewGame is true
@@ -122,10 +109,6 @@ function App() {
         setActiveSpace,
         totalTurns,
         setTotalTurns,
-        customDeck,
-        setCustomDeck,
-        customDeckName,
-        setCustomDeckName,
         unusedPrompts,
         feelings,
       }}
