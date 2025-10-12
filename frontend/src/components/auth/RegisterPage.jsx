@@ -1,5 +1,6 @@
 import { use, useState } from "react";
 import { Link, useNavigate } from "react-router";
+import Modal from "../common/Modal";
 import PasswordInput from "./PasswordInput.jsx";
 import {
   setEmailInStorage,
@@ -32,7 +33,6 @@ const RegisterPage = () => {
       }
     } catch (error) {
       console.error(error.message);
-      // Would be better to give user feedback on page here
     }
   };
 
@@ -48,7 +48,8 @@ const RegisterPage = () => {
       }
     } catch (error) {
       console.error(error);
-      // Would be better to give user feedback on page here
+      alert("Account already exists");
+      setSubmitting(false);
     }
   };
 
@@ -71,7 +72,16 @@ const RegisterPage = () => {
 
   return (
     <main>
-      <h1>Register</h1>
+      <h1>Register</h1>{" "}
+      <Modal
+        modalContent={
+          <p>
+            Register to create custom prompt decks! I will <b>never</b> sell
+            your email address, sign you up for a newsletter, or do anything
+            else nefarious with your information!
+          </p>
+        }
+      />
       <form onSubmit={handleRegister} className="white-bg">
         <label htmlFor="email">Email</label>
         <input id="email" name="email" type="email" required />
@@ -88,9 +98,11 @@ const RegisterPage = () => {
         </button>
       </form>
       <br />
-
       <span>
-        Already have an account? <Link to="/login">Log in here.</Link>
+        Already have an account?{" "}
+        <Link to="/login" className="blue-link">
+          Log in here.
+        </Link>
       </span>
     </main>
   );

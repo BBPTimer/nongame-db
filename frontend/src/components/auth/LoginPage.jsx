@@ -49,7 +49,13 @@ const LoginPage = () => {
       <h1>Log In</h1>
       <form onSubmit={handleLogin} className="white-bg">
         <label htmlFor="email">Email</label>
-        <input id="email" name="email" type="email" defaultValue={getEmailFromStorage()} required />
+        <input
+          id="email"
+          name="email"
+          type="email"
+          defaultValue={getEmailFromStorage()}
+          required
+        />
         <br />
 
         <PasswordInput id="password" label="Password" />
@@ -60,10 +66,16 @@ const LoginPage = () => {
         </button>
       </form>
       <br />
-      
+
       <span>
-        Don't have an account? <Link to="/register">Register here.</Link>
+        Don't have an account? <Link to="/register" className="blue-link">Register here.</Link>
       </span>
+      <br />
+      <br />
+
+      <a href="mailto:greg@nongame.app?subject=Reset%20password" className="blue-link">
+        Forgot password?
+      </a>
     </main>
   );
 };

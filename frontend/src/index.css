@@ -20,6 +20,11 @@ body {
   text-align: left;
 }
 
+.blue-link {
+  color: Blue;
+  text-decoration: none;
+}
+
 /* Google Icons */
 
 .material-symbols-outlined {
