@@ -1,4 +1,4 @@
-import { use, useContext, useEffect, useRef } from "react";
+import { use, useEffect, useRef } from "react";
 import { Textfit } from "react-textfit";
 import { GameContext } from "../../../../contexts/GameContext";
 import { DeckContext } from "../../../../contexts/DeckContext";
@@ -15,7 +15,7 @@ const Prompt = () => {
     totalTurns,
     unusedPrompts,
     feelings,
-  } = useContext(GameContext);
+  } = use(GameContext);
 
   const { allDecks, selectedDeckId } = use(DeckContext);
 

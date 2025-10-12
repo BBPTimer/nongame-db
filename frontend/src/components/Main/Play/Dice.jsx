@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { use, useState } from "react";
 import { GameContext } from "../../../contexts/GameContext";
 
 const Dice = () => {
@@ -11,7 +11,7 @@ const Dice = () => {
     setActiveSpace,
     totalTurns,
     setTotalTurns,
-  } = useContext(GameContext);
+  } = use(GameContext);
 
   const [isAudioEnabled, setIsAudioEnabled] = useState(
     localStorage.getItem("isAudioEnabled") === null

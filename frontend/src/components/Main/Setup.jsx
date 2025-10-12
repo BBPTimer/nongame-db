@@ -1,4 +1,4 @@
-import { use, useContext, useState } from "react";
+import { use, useState } from "react";
 import { GameContext } from "../../contexts/GameContext";
 import { DeckContext } from "../../contexts/DeckContext";
 import Modal from "../common/Modal";
@@ -15,7 +15,7 @@ const Setup = () => {
     numberOfPlayers,
     setNumberOfPlayers,
     setIsSetupComplete,
-  } = useContext(GameContext);
+  } = use(GameContext);
 
   const { allDecks, selectedDeckId, setSelectedDeckId } = use(DeckContext);
 

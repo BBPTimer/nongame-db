@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { use, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import PasswordInput from "./PasswordInput.jsx";
 import {
@@ -13,7 +13,7 @@ import { AuthContext } from "../../contexts/AuthContext.jsx";
 import { readFormData } from "../../common/utils.js";
 
 const RegisterPage = () => {
-  const { setAuth } = useContext(AuthContext);
+  const { setAuth } = use(AuthContext);
 
   const [submitting, setSubmitting] = useState(false);
 

@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router";
-import { useContext, useState } from "react";
+import { use, useState } from "react";
 import PasswordInput from "./PasswordInput";
 import { requestLogin } from "../../services/authService";
 import {
@@ -11,7 +11,7 @@ import { AuthContext } from "../../contexts/AuthContext";
 import { readFormData } from "../../common/utils";
 
 const LoginPage = () => {
-  const { setAuth } = useContext(AuthContext);
+  const { setAuth } = use(AuthContext);
 
   const navigate = useNavigate();
 
