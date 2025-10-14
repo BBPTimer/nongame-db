@@ -1,10 +1,10 @@
 import { createContext, useEffect, useState } from "react";
+import { validateToken } from "../services/authService";
 import {
   getEmailFromStorage,
   getTokenFromStorage,
   removeTokenFromStorage,
 } from "../services/storageService";
-import { validateToken } from "../services/authService";
 
 const initialAuth = {
   token: getTokenFromStorage() || null,

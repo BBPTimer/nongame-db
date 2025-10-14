@@ -1,10 +1,10 @@
 import { use, useRef, useState } from "react";
+import { Link } from "react-router";
 import { readFormData } from "../../common/utils";
 import { AuthContext } from "../../contexts/AuthContext";
 import { DeckContext } from "../../contexts/DeckContext";
-import Modal from "../common/Modal";
 import LogoutButton from "../auth/LogoutButton";
-import { Link } from "react-router";
+import Modal from "../common/Modal";
 
 const CustomDeck = () => {
   const { auth } = use(AuthContext);

@@ -1,14 +1,14 @@
-import { Link, useNavigate } from "react-router";
 import { use, useState } from "react";
-import PasswordInput from "./PasswordInput";
+import { Link, useNavigate } from "react-router";
+import { readFormData } from "../../common/utils";
+import { AuthContext } from "../../contexts/AuthContext";
 import { requestLogin } from "../../services/authService";
 import {
   getEmailFromStorage,
   setEmailInStorage,
   setTokenInStorage,
 } from "../../services/storageService";
-import { AuthContext } from "../../contexts/AuthContext";
-import { readFormData } from "../../common/utils";
+import PasswordInput from "./PasswordInput";
 
 const LoginPage = () => {
   const { setAuth } = use(AuthContext);

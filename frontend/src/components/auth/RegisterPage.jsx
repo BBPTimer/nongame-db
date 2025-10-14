@@ -1,17 +1,17 @@
 import { use, useState } from "react";
 import { Link, useNavigate } from "react-router";
-import Modal from "../common/Modal";
-import PasswordInput from "./PasswordInput.jsx";
-import {
-  setEmailInStorage,
-  setTokenInStorage,
-} from "../../services/storageService.js";
+import { readFormData } from "../../common/utils.js";
+import { AuthContext } from "../../contexts/AuthContext.jsx";
 import {
   requestLogin,
   requestRegistration,
 } from "../../services/authService.js";
-import { AuthContext } from "../../contexts/AuthContext.jsx";
-import { readFormData } from "../../common/utils.js";
+import {
+  setEmailInStorage,
+  setTokenInStorage,
+} from "../../services/storageService.js";
+import Modal from "../common/Modal";
+import PasswordInput from "./PasswordInput.jsx";
 
 const RegisterPage = () => {
   const { setAuth } = use(AuthContext);

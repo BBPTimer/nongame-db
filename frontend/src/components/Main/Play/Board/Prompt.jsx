@@ -1,7 +1,7 @@
 import { use, useEffect, useRef } from "react";
 import { Textfit } from "react-textfit";
-import { GameContext } from "../../../../contexts/GameContext";
 import { DeckContext } from "../../../../contexts/DeckContext";
+import { GameContext } from "../../../../contexts/GameContext";
 
 const Prompt = () => {
   const {

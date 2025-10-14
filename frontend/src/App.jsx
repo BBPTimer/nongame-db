@@ -6,10 +6,10 @@ import Instructions from "./components/Instructions";
 import Main from "./components/Main";
 import CustomDeck from "./components/Main/CustomDeck";
 import LoginPage from "./components/auth/LoginPage";
+import PasswordChange from "./components/auth/PasswordChange";
 import RegisterPage from "./components/auth/RegisterPage";
 import { AuthContext } from "./contexts/AuthContext";
 import { GameContext } from "./contexts/GameContext";
-import PasswordChange from "./components/auth/PasswordChange";
 
 function App() {
   const { auth } = use(AuthContext);

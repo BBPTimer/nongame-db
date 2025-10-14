@@ -1,6 +1,6 @@
-import Spaces from "./Board/Spaces";
-import Prompt from "./Board/Prompt";
 import './Board.css';
+import Prompt from "./Board/Prompt";
+import Spaces from "./Board/Spaces";
 
 const Board = () => {
   return (

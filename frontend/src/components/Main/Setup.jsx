@@ -1,10 +1,10 @@
 import { use, useState } from "react";
-import { GameContext } from "../../contexts/GameContext";
-import { DeckContext } from "../../contexts/DeckContext";
-import Modal from "../common/Modal";
-import PlayerForms from "./Setup/PlayerForms";
-import NewGameButton from "../common/NewGameButton";
 import { shuffle } from "../../common/utils";
+import { DeckContext } from "../../contexts/DeckContext";
+import { GameContext } from "../../contexts/GameContext";
+import Modal from "../common/Modal";
+import NewGameButton from "../common/NewGameButton";
+import PlayerForms from "./Setup/PlayerForms";
 
 const Setup = () => {
   const {

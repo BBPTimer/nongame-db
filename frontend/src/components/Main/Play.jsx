@@ -2,8 +2,8 @@ import { use } from "react";
 import { GameContext } from "../../contexts/GameContext";
 import Board from "./Play/Board";
 import Dice from "./Play/Dice";
-import UpNext from "./Play/UpNext";
 import PlayerCards from "./Play/PlayerCards";
+import UpNext from "./Play/UpNext";
 
 const Play = () => {
   const { setIsGameComplete } = use(GameContext);

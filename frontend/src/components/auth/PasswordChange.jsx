@@ -1,8 +1,8 @@
 import { use, useState } from "react";
 import { useNavigate } from "react-router";
-import PasswordInput from "./PasswordInput.jsx";
-import { AuthContext } from "../../contexts/AuthContext.jsx";
 import { readFormData } from "../../common/utils.js";
+import { AuthContext } from "../../contexts/AuthContext.jsx";
+import PasswordInput from "./PasswordInput.jsx";
 
 const PasswordChange = () => {
   const { auth } = use(AuthContext);
