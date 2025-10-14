@@ -1,4 +1,4 @@
-import { createContext, use, useEffect, useRef, useState } from "react";
+import { createContext, use, useEffect, useState } from "react";
 import Deck from "../classes/Deck";
 import defaultData from "../defaultDecks.json";
 import { AuthContext } from "./AuthContext";
@@ -117,13 +117,6 @@ export const DeckContextProvider = ({ children }) => {
     localStorage.getItem("deck") || 1
   );
 
-  const isFirstRender = useRef(true);
-
-  // Set isFirstRender = true on first render
-  useEffect(() => {
-    isFirstRender.current = true;
-  }, []);
-
   const resetDeck = () => {
     setSelectedDeckId(1);
     localStorage.setItem("deck", 1);
@@ -131,8 +124,14 @@ export const DeckContextProvider = ({ children }) => {
 
   // Reset selected deck if that deck no longer contains prompts or exists
   useEffect(() => {
-    // If this is not the first render and fetch succeeded
-    if (!isFirstRender.current && customDecks.length) {
+    // Return if customDecks is undefined
+    try {
+      customDecks.length;
+    } catch {
+      return;
+    }
+    // If customDecks is populated
+    if (customDecks.length) {
       try {
         // If selected deck has no prompts, reset selected decks
         if (
@@ -150,7 +149,6 @@ export const DeckContextProvider = ({ children }) => {
         }
       }
     }
-    isFirstRender.current = false;
   }, [allDecks]);
 
   return (
