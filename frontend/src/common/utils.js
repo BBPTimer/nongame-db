@@ -7,10 +7,6 @@ const shuffle = (array) => {
   return array;
 };
 
-const resetDeck = () => {
-  localStorage.removeItem("deck");
-};
-
 const readFormData = (event) => {
   const form = event.target;
   const formData = new FormData(form);
@@ -18,4 +14,4 @@ const readFormData = (event) => {
   return formJson;
 };
 
-export { shuffle, resetDeck, readFormData };
+export { shuffle, readFormData };

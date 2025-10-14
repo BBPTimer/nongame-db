@@ -1,10 +1,10 @@
 import { use, useRef, useState } from "react";
 import { useNavigate } from "react-router";
-import { AuthContext } from "../../contexts/AuthContext";
-import Modal from "../common/Modal";
 import { readFormData } from "../../common/utils";
-import { removeTokenFromStorage } from "../../services/storageService";
+import { AuthContext } from "../../contexts/AuthContext";
 import { DeckContext } from "../../contexts/DeckContext";
+import { removeTokenFromStorage } from "../../services/storageService";
+import Modal from "../common/Modal";
 
 const CustomDeck = () => {
   const { auth, setAuth } = use(AuthContext);

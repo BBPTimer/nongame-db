@@ -1,14 +1,14 @@
-import { useState, useRef, use } from "react";
-import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router";
-import { GameContext } from "./contexts/GameContext";
-import { AuthContext } from "./contexts/AuthContext";
+import { use, useRef, useState } from "react";
+import { Navigate, Route, BrowserRouter as Router, Routes } from "react-router";
+import { shuffle } from "./common/utils";
 import Header from "./components/Header";
-import Main from "./components/Main";
 import Instructions from "./components/Instructions";
+import Main from "./components/Main";
 import CustomDeck from "./components/Main/CustomDeck";
-import RegisterPage from "./components/auth/RegisterPage";
 import LoginPage from "./components/auth/LoginPage";
-import { shuffle, resetDeck } from "./common/utils";
+import RegisterPage from "./components/auth/RegisterPage";
+import { AuthContext } from "./contexts/AuthContext";
+import { GameContext } from "./contexts/GameContext";
 
 function App() {
   const { auth } = use(AuthContext);
@@ -72,7 +72,7 @@ function App() {
     setIsGameComplete(false);
     // Set default LS deck
     if (!localStorage.getItem("deck")) {
-      resetDeck();
+      localStorage.setItem("deck", 1);
     }
     setPrompts([]);
     setPrompt("");

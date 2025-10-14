@@ -1,7 +1,7 @@
-import { createContext, use, useEffect, useState } from "react";
-import { AuthContext } from "./AuthContext";
+import { createContext, use, useEffect, useRef, useState } from "react";
 import Deck from "../classes/Deck";
 import defaultData from "../defaultDecks.json";
+import { AuthContext } from "./AuthContext";
 
 export const DeckContext = createContext();
 
@@ -101,15 +101,93 @@ export const DeckContextProvider = ({ children }) => {
     }
   }, [customDecks]);
 
-  // Concatenate defaultDecks and customDecks
   const [allDecks, setAllDecks] = useState([]);
+
+  // Set all decks to default decks when page loads
+  useEffect(() => {
+    setCustomDecks(defaultDecks);
+  }, []);
 
   // Concatenate decks when customDecks changes
   useEffect(() => {
     customDecks && setAllDecks(defaultDecks.concat(customDecks));
   }, [customDecks]);
 
-  const [selectedDeckId, setSelectedDeckId] = useState(localStorage.getItem("deck") || 1);
+  const [selectedDeckId, setSelectedDeckId] = useState(
+    localStorage.getItem("deck") || 1
+  );
+
+  const isFirstRender = useRef(true);
+
+  // Set isFirstRender = true on first render
+  useEffect(() => {
+    isFirstRender.current = true;
+  }, []);
+
+  const resetDeck = () => {
+    setSelectedDeckId(1);
+    localStorage.setItem("deck", 1);
+  };
+
+  // Reset selected deck if that deck no longer contains prompts or exists
+  useEffect(() => {
+    // If this is not the first render and fetch succeeded
+    if (!isFirstRender.current && customDecks.length) {
+      try {
+        // If selected deck has no prompts, reset selected decks
+        if (
+          allDecks.find((deck) => deck.id == selectedDeckId).prompts.length ===
+          0
+        ) {
+          resetDeck();
+        }
+      } catch {
+        try {
+          // If selected deck is undefined, reset selected decks
+          allDecks.find((deck) => deck.id == selectedDeckId).prompts.length;
+        } catch {
+          resetDeck();
+        }
+      }
+    }
+    isFirstRender.current = false;
+  }, [allDecks]);
+
+  // useEffect(() => {
+  //   if (allDecks.length) {
+  //     // console.log("Decks has length");
+  //     // console.log(allDecks.find((deck) => deck.id == selectedDeckId));
+  //     // try {
+  //     //   allDecks.find((deck) => deck.id == selectedDeckId).prompts;
+  //     // } catch {
+  //     //   console.log("Undefined try");
+  //     // }
+  //   //   if (
+  //   //     "allDecks.find((deck) => deck.id == selectedDeckId).prompts.length" in
+  //   //     window
+  //   //   ) {
+  //   //     console.log("Undefined window");
+  //   //   }
+  //   // }
+  //   // if (allDecks.length && !allDecks.find((deck) => deck.id == selectedDeckId)) {
+  //   //   setSelectedDeckId(1);
+  //   //   localStorage.setItem("deck", 1);
+  //   // }
+  // }, [allDecks]);
+
+  // useEffect(() => {
+  //   if (allDecks.length > 0) {
+  //     try {
+  //       allDecks.find((deck) => deck.id == selectedDeckId).prompts.length > 0;
+  //     } catch {
+  //       console.log("Undefined try");
+  //     }
+  //   }
+  //   // if (allDecks.length && !allDecks.find((deck) => deck.id == selectedDeckId)) {
+  //   //   setSelectedDeckId(1);
+  //   //   localStorage.setItem("deck", 1);
+  //   // }
+  // }, [allDecks]);
 
   return (
     <DeckContext.Provider
@@ -121,7 +199,7 @@ export const DeckContextProvider = ({ children }) => {
         firstDeckName,
         allDecks,
         selectedDeckId,
-        setSelectedDeckId
+        setSelectedDeckId,
       }}
     >
       {children}
