@@ -153,42 +153,6 @@ export const DeckContextProvider = ({ children }) => {
     isFirstRender.current = false;
   }, [allDecks]);
 
-  // useEffect(() => {
-  //   if (allDecks.length) {
-  //     // console.log("Decks has length");
-  //     // console.log(allDecks.find((deck) => deck.id == selectedDeckId));
-  //     // try {
-  //     //   allDecks.find((deck) => deck.id == selectedDeckId).prompts;
-  //     // } catch {
-  //     //   console.log("Undefined try");
-  //     // }
-  //   //   if (
-  //   //     "allDecks.find((deck) => deck.id == selectedDeckId).prompts.length" in
-  //   //     window
-  //   //   ) {
-  //   //     console.log("Undefined window");
-  //   //   }
-  //   // }
-  //   // if (allDecks.length && !allDecks.find((deck) => deck.id == selectedDeckId)) {
-  //   //   setSelectedDeckId(1);
-  //   //   localStorage.setItem("deck", 1);
-  //   // }
-  // }, [allDecks]);
-
-  // useEffect(() => {
-  //   if (allDecks.length > 0) {
-  //     try {
-  //       allDecks.find((deck) => deck.id == selectedDeckId).prompts.length > 0;
-  //     } catch {
-  //       console.log("Undefined try");
-  //     }
-  //   }
-  //   // if (allDecks.length && !allDecks.find((deck) => deck.id == selectedDeckId)) {
-  //   //   setSelectedDeckId(1);
-  //   //   localStorage.setItem("deck", 1);
-  //   // }
-  // }, [allDecks]);
-
   return (
     <DeckContext.Provider
       value={{

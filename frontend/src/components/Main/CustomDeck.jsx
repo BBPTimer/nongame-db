@@ -1,14 +1,14 @@
 import { use, useRef, useState } from "react";
-import { useNavigate } from "react-router";
 import { readFormData } from "../../common/utils";
 import { AuthContext } from "../../contexts/AuthContext";
 import { DeckContext } from "../../contexts/DeckContext";
-import { removeTokenFromStorage } from "../../services/storageService";
 import Modal from "../common/Modal";
+import LogoutButton from "../auth/LogoutButton";
 
 const CustomDeck = () => {
-  const { auth, setAuth } = use(AuthContext);
-  const { isLoading, customDecks, fetchDecks, firstDeckName } = use(DeckContext);
+  const { auth } = use(AuthContext);
+  const { isLoading, customDecks, fetchDecks, firstDeckName } =
+    use(DeckContext);
 
   // Utility function
   const closeOtherForms = (callback) => {
@@ -173,19 +173,6 @@ const CustomDeck = () => {
       });
       fetchDecks();
     }
-  };
-
-  // Logout
-  const navigate = useNavigate();
-
-  const handleLogOut = () => {
-    setAuth({
-      token: null,
-      email: null,
-      isAuthenticated: false,
-    });
-    removeTokenFromStorage();
-    navigate("/");
   };
 
   if (isLoading) {
@@ -450,7 +437,7 @@ const CustomDeck = () => {
           </table>
         </div>
         <br />
-        <button onClick={handleLogOut}>Logout</button>
+        <LogoutButton />
         <br />
       </>
     );
