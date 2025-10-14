@@ -90,7 +90,7 @@ const Instructions = () => {
       <h1>
         <a
           id="issues"
-          href="https://github.com/BBPTimer/nongame/issues"
+          href="https://github.com/BBPTimer/nongame-db/issues"
           target="top"
         >
           Issues or feature requests?

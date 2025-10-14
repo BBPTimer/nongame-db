@@ -9,6 +9,7 @@ import LoginPage from "./components/auth/LoginPage";
 import RegisterPage from "./components/auth/RegisterPage";
 import { AuthContext } from "./contexts/AuthContext";
 import { GameContext } from "./contexts/GameContext";
+import PasswordChange from "./components/auth/PasswordChange";
 
 function App() {
   const { auth } = use(AuthContext);
@@ -122,6 +123,9 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           {auth.isAuthenticated && (
             <Route path="/custom" element={<CustomDeck />} />
+          )}
+          {auth.isAuthenticated && (
+            <Route path="/pwchange" element={<PasswordChange />} />
           )}
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

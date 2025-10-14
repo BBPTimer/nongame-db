@@ -22,7 +22,7 @@ const Header = () => {
       ) : (
         <Link to="/instructions">How to Play</Link>
       )}
-      {page === "/custom" || page === "/register" || page === "/login" ? (
+      {page === "/custom" || page === "/register" || page === "/login" || page === "/pwchange" ? (
         <div className="heading">Custom Decks</div>
       ) : (
         (auth.isAuthenticated && <Link to="/custom">Custom Decks</Link>) ||

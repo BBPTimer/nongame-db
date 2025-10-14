@@ -4,6 +4,7 @@ import { AuthContext } from "../../contexts/AuthContext";
 import { DeckContext } from "../../contexts/DeckContext";
 import Modal from "../common/Modal";
 import LogoutButton from "../auth/LogoutButton";
+import { Link } from "react-router";
 
 const CustomDeck = () => {
   const { auth } = use(AuthContext);
@@ -438,6 +439,10 @@ const CustomDeck = () => {
         </div>
         <br />
         <LogoutButton />
+        <br />
+        <Link to="/pwchange">
+          <button>Change Password</button>
+        </Link>
         <br />
       </>
     );
