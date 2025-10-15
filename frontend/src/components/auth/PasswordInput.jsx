@@ -10,10 +10,10 @@ const PasswordInput = ({ id, label }) => {
   return (
     <>
       <label htmlFor={id}>{label}</label>
-      <input id={id} name={id} type={showInput ? "text" : "password"} minLength={8} required />
+      <input id={id} name={id} type={showInput ? "text" : "password"} minLength={8} maxLength={72} required />
       {showInput ? (
         <span
-          className="material-symbols-outlined"
+          className="material-symbols-outlined shake"
           title="Click to hide password"
           onClick={toggleShowPassword}
         >
@@ -21,7 +21,7 @@ const PasswordInput = ({ id, label }) => {
         </span>
       ) : (
         <span
-          className="material-symbols-outlined"
+          className="material-symbols-outlined shake"
           title="Click to show password"
           onClick={toggleShowPassword}
         >

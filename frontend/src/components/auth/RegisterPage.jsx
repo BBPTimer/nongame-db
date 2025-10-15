@@ -84,7 +84,7 @@ const RegisterPage = () => {
       />
       <form onSubmit={handleRegister} className="white-bg">
         <label htmlFor="email">Email</label>
-        <input id="email" name="email" type="email" required />
+        <input id="email" name="email" type="email" maxLength={254} required />
         <br />
 
         <PasswordInput id="password" label="Password" />
