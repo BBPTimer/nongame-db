@@ -34,8 +34,7 @@ public class UserProfileController {
         if (opt.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } else {
-            UserProfile userProfile = opt.get();
-            return new ResponseEntity<>(userProfile, HttpStatus.OK);
+            return new ResponseEntity<>(opt.get(), HttpStatus.OK);
         }
     }
 

@@ -7,10 +7,11 @@ import jakarta.validation.constraints.Size;
 public class UserProfileRequestDTO {
     @NotNull(message = "Email is required")
     @Email(message = "Provide valid email address")
+    @Size(max = 254, message = "Email address may not exceed 254 characters")
     private String email;
 
     @NotNull(message = "Password is required")
-    @Size(min = 8, message = "Password should be at least 8 characters")
+    @Size(min = 8, max = 72, message = "Password should be between 8 and 72 characters")
     private String password;
 
     public UserProfileRequestDTO() {
