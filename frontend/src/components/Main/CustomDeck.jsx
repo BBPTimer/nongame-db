@@ -29,7 +29,7 @@ const CustomDeck = () => {
     // Read form data
     const formJson = readFormData(event);
     // POST request
-    await fetch("http://localhost:8080/api/decks/add", {
+    await fetch("http://64.225.88.28:8080/api/decks/add", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -58,7 +58,7 @@ const CustomDeck = () => {
     const formJson = readFormData(event);
     // POST request
     await fetch(
-      "http://localhost:8080/api/decks/update/" +
+      "http://64.225.88.28:8080/api/decks/update/" +
         customDecks[selectedDeckIndex].id,
       {
         method: "PUT",
@@ -79,7 +79,7 @@ const CustomDeck = () => {
   const handleDeleteDeck = async (deckId) => {
     if (confirm("Are you sure that you want to delete this deck?")) {
       // DELETE request
-      await fetch("http://localhost:8080/api/decks/delete/" + deckId, {
+      await fetch("http://64.225.88.28:8080/api/decks/delete/" + deckId, {
         method: "DELETE",
         headers: {
           Authorization: "Bearer " + auth.token,
@@ -105,7 +105,7 @@ const CustomDeck = () => {
     // Read form data
     const formJson = readFormData(event);
     // POST request
-    await fetch("http://localhost:8080/api/prompts/add", {
+    await fetch("http://64.225.88.28:8080/api/prompts/add", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -139,7 +139,7 @@ const CustomDeck = () => {
     const formJson = readFormData(event);
     // POST request
     await fetch(
-      "http://localhost:8080/api/prompts/update/" + currentPrompt.id,
+      "http://64.225.88.28:8080/api/prompts/update/" + currentPrompt.id,
       {
         method: "PUT",
         headers: {
@@ -166,7 +166,7 @@ const CustomDeck = () => {
   const handleDeletePrompt = async (promptId) => {
     if (confirm("Are you sure that you want to delete this prompt?")) {
       // DELETE request
-      await fetch("http://localhost:8080/api/prompts/delete/" + promptId, {
+      await fetch("http://64.225.88.28:8080/api/prompts/delete/" + promptId, {
         method: "DELETE",
         headers: {
           Authorization: "Bearer " + auth.token,

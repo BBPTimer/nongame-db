@@ -2,7 +2,7 @@ import axios from "axios";
 import { getTokenFromStorage } from "../services/storageService";
 
 const apiClient = axios.create({
-  baseURL: "http://localhost:8080/api",
+  baseURL: "http://64.225.88.28:8080/api",
 });
 
 // Ensures existing token is sent along with requests other than /login and /register

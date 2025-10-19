@@ -41,7 +41,7 @@ export const DeckContextProvider = ({ children }) => {
     const decks = [];
 
     try {
-      const response = await fetch("http://localhost:8080/api/users", {
+      const response = await fetch("http://64.225.88.28:8080/api/users", {
         headers: {
           Authorization: "Bearer " + auth.token,
         },
@@ -66,7 +66,7 @@ export const DeckContextProvider = ({ children }) => {
       // Add deck if user has 0 decks
       if (!decks.length) {
         // POST request
-        await fetch("http://localhost:8080/api/decks/add", {
+        await fetch("http://64.225.88.28:8080/api/decks/add", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

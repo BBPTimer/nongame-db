@@ -48,7 +48,7 @@ const RegisterPage = () => {
       }
     } catch (error) {
       console.error(error);
-      alert("Account already exists");
+      alert("Error creating account");
       setSubmitting(false);
     }
   };
@@ -99,9 +99,9 @@ const RegisterPage = () => {
       </form>
       <br />
       <span>
-        Already have an account?{" "}
+        Already a member?{" "}
         <Link to="/login" className="blue-link">
-          Log in here.
+          Sign in here.
         </Link>
       </span>
     </main>

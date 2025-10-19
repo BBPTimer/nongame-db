@@ -68,12 +68,18 @@ const LoginPage = () => {
       <br />
 
       <span>
-        Don't have an account? <Link to="/register" className="blue-link">Register here.</Link>
+        No account yet?{" "}
+        <Link to="/register" className="blue-link">
+          Sign up here.
+        </Link>
       </span>
       <br />
       <br />
 
-      <a href="mailto:greg@nongame.app?subject=Reset%20password" className="blue-link">
+      <a
+        href="mailto:greg@nongame.app?subject=Reset%20password"
+        className="blue-link"
+      >
         Forgot password?
       </a>
     </main>
