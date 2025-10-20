@@ -10,7 +10,9 @@ import java.util.Objects;
 @Entity
 public class Deck {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // Start deck id at 101 to avoid conflict with default decks
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "deckSequence")
+    @SequenceGenerator(name = "deckSequence", initialValue = 101, allocationSize = 1)
     private int id;
 
     private String deckName;

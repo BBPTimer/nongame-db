@@ -26,7 +26,7 @@ const PasswordChange = () => {
       return;
     }
     // PUT request
-    let response = await fetch("http://64.225.88.28:8080/api/users/pwChange", {
+    let response = await fetch("http://localhost:8080/api/users/pwChange", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
