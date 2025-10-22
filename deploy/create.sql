@@ -1,0 +1,8 @@
+DROP SCHEMA IF EXISTS nongame;
+CREATE SCHEMA nongame;
+
+DROP USER IF EXISTS admin@localhost;
+CREATE USER admin@localhost IDENTIFIED BY "BE7V-5H8a#g9Pgar";
+
+GRANT ALL PRIVILEGES ON nongame.* TO admin@localhost WITH GRANT OPTION;
+FLUSH PRIVILEGES;

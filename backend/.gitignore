@@ -34,3 +34,4 @@ build/
 
 ### Other ###
 .env
+src/main/java/com/nongame/backend/config/DataSourceConfig.java
