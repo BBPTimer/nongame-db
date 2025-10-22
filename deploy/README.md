@@ -39,7 +39,7 @@
 	* This script will:
 		1. Create SQL database to support the backend
 		2. Create admin user to connect to the database
-# Run backend JAR file
+## Run backend JAR file
 * Copy the **full file path** of **backend.jar** found in the **deploy** folder of the cloned repo
 * In your terminal, navigate to your Java installation folder, and paste:
 	`java -jar <BACKEND.JAR PATH>`
