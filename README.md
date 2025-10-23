@@ -28,8 +28,8 @@ Click Custom Deck to create custom prompt "decks." Users may create an infinite 
 # [Deploy](https://github.com/BBPTimer/nongame-db/blob/main/deploy/README.md)
 # Planning
 ## ERD
-<img src="https://i.imgur.com/i7mj7Fk.png" height="400">
-[Wireframes](https://drive.google.com/file/d/1V2YAU9I66HUYVPPtmce25Dhn844x6Djm/view?usp=share_link)
+<img src="https://i.imgur.com/i7mj7Fk.png" height="400"></img>
+- [Wireframes](https://drive.google.com/file/d/1V2YAU9I66HUYVPPtmce25Dhn844x6Djm/view?usp=share_link)
 # Future Features
 - Automated forgot password
 - Online multiplayer
