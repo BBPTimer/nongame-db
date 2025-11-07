@@ -55,11 +55,11 @@ const Setup = () => {
   };
 
   // Render deck options
-  const deckOptions = allDecks.map((deck) => {
+  const deckOptions = allDecks.map((deck, index) => {
     return (
       // Return option only if deck contains at least 1 prompt
       deck.prompts.length && (
-        <option key={deck.id} value={deck.id}>
+        <option key={index} value={deck.id}>
           {deck.deckName}
         </option>
       )

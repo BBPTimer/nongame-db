@@ -9,7 +9,7 @@ export const DeckContextProvider = ({ children }) => {
   const { auth } = use(AuthContext);
 
   // Default decks
-  const [defaultDecks, setDefaultDecks] = useState([]);
+  const [defaultDecks, setDefaultDecks] = useState(defaultData.decks);
 
   const loadDefaultDecks = () => {
     let decks = [];
