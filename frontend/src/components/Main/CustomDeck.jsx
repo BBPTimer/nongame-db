@@ -147,7 +147,7 @@ const CustomDeck = () => {
           Authorization: "Bearer " + auth.token,
         },
         body: JSON.stringify({
-          promptText: formJson.updatedPromptText,
+          promptText: currentPrompt.promptText,
         }),
       }
     );
@@ -369,7 +369,8 @@ const CustomDeck = () => {
                 <textarea
                   id="edit-prompt"
                   name="updatedPromptText"
-                  defaultValue={currentPrompt.promptText}
+                  value={currentPrompt.promptText}
+                  onChange={(event) => setCurrentPrompt({...currentPrompt, promptText: event.target.value})}
                   rows="4"
                   cols="40"
                   maxLength="130"
